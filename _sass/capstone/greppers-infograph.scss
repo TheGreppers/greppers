@@ -449,6 +449,210 @@ $sfi-light: #dce0f0;
 	letter-spacing: 0.5rem;
 }
 
+// ── Kanban backlog page styles ───────────
+
+.sfi-kanban-header {
+	text-align: center;
+	padding: 2.5rem 1rem 1.5rem;
+	border-bottom: 2px solid $sfi-border;
+	margin-bottom: 2rem;
+}
+
+.sfi-kanban-badge {
+	display: inline-block;
+	background: linear-gradient(135deg, $sfi-blue, $sfi-blue-light);
+	color: #fff;
+	padding: 0.4rem 1.2rem;
+	border-radius: 50px;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 700;
+	font-size: 0.78rem;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-bottom: 1rem;
+}
+
+.sfi-kanban-title {
+	font-family: "Barlow Condensed", sans-serif;
+	font-size: 2.2rem;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 1.5px;
+	background: linear-gradient(90deg, $sfi-amber, $sfi-amber-light, $sfi-amber);
+	background-size: 200% auto;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: sfi-gradient 4s ease infinite;
+	margin-bottom: 0.4rem;
+}
+
+.sfi-kanban-subtitle {
+	color: $sfi-muted;
+	font-size: 0.95rem;
+	margin-bottom: 1.2rem;
+}
+
+.sfi-kanban-legend {
+	display: flex;
+	justify-content: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.sfi-status-pill {
+	padding: 0.3rem 0.85rem;
+	border-radius: 20px;
+	font-size: 0.78rem;
+	font-weight: 700;
+	font-family: "Barlow Condensed", sans-serif;
+	letter-spacing: 0.5px;
+}
+
+.sfi-status--done {
+	background: rgba(34, 197, 94, 0.15);
+	color: #4ade80;
+	border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.sfi-status--in-progress {
+	background: rgba(59, 130, 246, 0.15);
+	color: $sfi-blue-light;
+	border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.sfi-status--todo {
+	background: rgba(148, 163, 184, 0.12);
+	color: #94a3b8;
+	border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+// Issue cards
+
+.sfi-issue-card {
+	background: $sfi-card;
+	border-radius: 12px;
+	padding: 1.1rem 1.25rem;
+	margin-bottom: 1rem;
+	border: 1px solid $sfi-border;
+	border-left: 4px solid transparent;
+	transition: box-shadow 0.2s;
+
+	&:hover {
+		box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+	}
+}
+
+.sfi-issue--done {
+	border-left: 4px solid #22c55e;
+}
+
+.sfi-issue--in-progress {
+	border-left: 4px solid $sfi-blue;
+}
+
+.sfi-issue--todo {
+	border-left: 4px solid #475569;
+}
+
+.sfi-issue-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+	margin-bottom: 0.55rem;
+}
+
+.sfi-issue-id {
+	color: $sfi-muted;
+	font-size: 0.78rem;
+	font-family: "Barlow Condensed", sans-serif;
+	font-weight: 600;
+	flex-shrink: 0;
+	padding-top: 0.1rem;
+}
+
+.sfi-issue-title {
+	color: $sfi-light;
+	font-weight: 700;
+	font-size: 0.97rem;
+	flex-grow: 1;
+}
+
+.sfi-issue-assignee {
+	color: $sfi-amber-light;
+	font-size: 0.78rem;
+	font-weight: 700;
+	font-family: "Barlow Condensed", sans-serif;
+	flex-shrink: 0;
+	margin-left: auto;
+}
+
+.sfi-issue-body {
+	color: $sfi-muted;
+	font-size: 0.85rem;
+	line-height: 1.65;
+	margin: 0 0 0.75rem;
+
+	code {
+		background: rgba(29, 78, 216, 0.12);
+		color: $sfi-blue-light;
+		padding: 0.1rem 0.35rem;
+		border-radius: 4px;
+		font-size: 0.82rem;
+	}
+}
+
+.sfi-issue-labels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin-bottom: 0.5rem;
+}
+
+.sfi-label {
+	padding: 0.2rem 0.55rem;
+	border-radius: 4px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	font-family: "Barlow Condensed", sans-serif;
+	letter-spacing: 0.5px;
+	text-transform: lowercase;
+}
+
+.sfi-label--planning   { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+.sfi-label--research   { background: rgba(20, 184, 166, 0.15); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.3); }
+.sfi-label--database   { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3); }
+.sfi-label--design     { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+.sfi-label--mobile     { background: rgba(34, 197, 94,  0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.sfi-label--data       { background: rgba(234, 179, 8,  0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+.sfi-label--apcsp      { background: rgba(239, 68, 68,  0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.sfi-label--milestone  { background: rgba(217, 119, 6,  0.15); color: $sfi-amber-light; border: 1px solid rgba(217, 119, 6, 0.35); }
+.sfi-label--backend    { background: rgba(29, 78, 216,  0.15); color: $sfi-blue-light; border: 1px solid rgba(29, 78, 216, 0.3); }
+.sfi-label--flask      { background: rgba(15, 118, 110, 0.15); color: #34d399; border: 1px solid rgba(15, 118, 110, 0.3); }
+.sfi-label--api        { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+.sfi-label--auth       { background: rgba(220, 38, 38,  0.15); color: #fca5a5; border: 1px solid rgba(220, 38, 38, 0.3); }
+.sfi-label--core       { background: rgba(217, 119, 6,  0.2);  color: $sfi-amber-light; border: 1px solid rgba(217, 119, 6, 0.4); }
+.sfi-label--feature    { background: rgba(59, 130, 246, 0.15); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3); }
+.sfi-label--deploy     { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+.sfi-label--devops     { background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); }
+.sfi-label--ui         { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
+.sfi-label--accessibility { background: rgba(34, 211, 238, 0.15); color: #67e8f9; border: 1px solid rgba(34, 211, 238, 0.3); }
+.sfi-label--pitch      { background: rgba(251, 191, 36, 0.15); color: #fde68a; border: 1px solid rgba(251, 191, 36, 0.3); }
+
+.sfi-issue-milestone {
+	color: $sfi-amber-light;
+	font-size: 0.8rem;
+	font-weight: 700;
+	font-family: "Barlow Condensed", sans-serif;
+	letter-spacing: 0.5px;
+	background: rgba(217, 119, 6, 0.08);
+	border: 1px solid rgba(217, 119, 6, 0.25);
+	border-radius: 6px;
+	padding: 0.3rem 0.65rem;
+	display: inline-block;
+}
+
 // ── Warm amber variant for SFI Foundation ───────────
 
 $sfi-amber: #d97706;
