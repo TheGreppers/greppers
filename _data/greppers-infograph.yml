@@ -14,9 +14,9 @@ Features:
 Tech:
   - name: "Python / Flask"
     icon: "🐍"
-  - name: "React + Next.js"
-    icon: "⚛️"
-  - name: "PostgreSQL"
+  - name: "HTML / CSS / JS"
+    icon: "🌐"
+  - name: "SQLite"
     icon: "🗄️"
 
 Metrics:

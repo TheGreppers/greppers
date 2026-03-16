@@ -12,11 +12,11 @@ Features:
   - "Offline-First Syncing — saves data locally, syncs when Wi-Fi is available"
 
 Tech:
-  - name: "Python"
+  - name: "Python / Flask"
     icon: "🐍"
-  - name: "Flask"
-    icon: "⚗️"
-  - name: "PostgreSQL"
+  - name: "HTML / CSS / JS"
+    icon: "🌐"
+  - name: "SQLite"
     icon: "🗄️"
 
 Metrics:
