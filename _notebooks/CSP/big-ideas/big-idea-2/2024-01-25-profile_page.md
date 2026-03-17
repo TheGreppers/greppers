@@ -15,6 +15,8 @@ In a web application, the **profile page** plays a crucial role in providing use
 
 Before you start, try logging in  and playing around with the profile page features. How do you add a section? What happens when you change your uid and password? This will help you understand **what** the goal of the application is.
 
+
+
 ### What You'll Learn
 
 In this step-by-step guide, you'll learn how to:
