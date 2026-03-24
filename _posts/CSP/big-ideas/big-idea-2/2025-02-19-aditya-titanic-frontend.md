@@ -1,409 +1,422 @@
 ---
-layout: tailwindPost
+layout: post
 title: Titanic Survival Predictor
-description: Tailwind frontend for the Titanic notebook predictor.
+description: Interactive frontend for the Titanic ML model - predict your survival chances!
 courses: { csp: {week: 25} }
-permalink: /titanic/predictor-aditya
-show_reading_time: false
+permalink: /titanic/predictor
 ---
 
-<div class="mx-auto max-w-7xl space-y-8 px-4 py-6 text-slate-900">
-  <section class="relative overflow-hidden rounded-[32px] border border-slate-800 bg-slate-950 text-white shadow-2xl">
-    <img
-      src="{{ site.baseurl }}/images/javaml/titanic.jpg"
-      alt="Titanic at sea"
-      class="absolute inset-0 h-full w-full object-cover opacity-25"
-    >
-    <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-cyan-950/65"></div>
+<style>
+  .titanic-container {
+    max-width: 700px;
+    margin: 0 auto;
+    font-family: inherit;
+  }
+  .form-card {
+    background: #1E1E2F;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .form-card h2 {
+    color: #50FA7B;
+    margin-top: 0;
+  }
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .form-group {
+    flex: 1;
+    min-width: 140px;
+  }
+  .form-group label {
+    display: block;
+    margin-bottom: 4px;
+    color: #ccc;
+    font-size: 0.9em;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #2C2C3C;
+    color: #E4E4E4;
+    font-size: 1em;
+    box-sizing: border-box;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #50FA7B;
+  }
+  #predict-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #FF7F50, #FF5C1A);
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-top: 8px;
+  }
+  #predict-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255,92,26,0.4);
+  }
+  #predict-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .results-card {
+    background: #1E1E2F;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    display: none;
+  }
+  .results-card h2 {
+    color: #FFB347;
+    margin-top: 0;
+  }
+  .prob-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .prob-box {
+    flex: 1;
+    text-align: center;
+    padding: 16px;
+    border-radius: 10px;
+  }
+  .prob-box.survive {
+    background: rgba(80, 250, 123, 0.15);
+    border: 2px solid #50FA7B;
+  }
+  .prob-box.die {
+    background: rgba(255, 85, 85, 0.15);
+    border: 2px solid #FF5555;
+  }
+  .prob-box .prob-label {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-bottom: 6px;
+  }
+  .prob-box .prob-value {
+    font-size: 2em;
+    font-weight: bold;
+  }
+  .prob-box.survive .prob-value { color: #50FA7B; }
+  .prob-box.die .prob-value { color: #FF5555; }
+  .bar-container {
+    margin-bottom: 20px;
+  }
+  .bar-bg {
+    height: 28px;
+    background: rgba(255,85,85,0.3);
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #50FA7B, #3AD68A);
+    border-radius: 14px;
+    transition: width 0.8s ease;
+  }
+  .bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 4px;
+  }
+  .weights-section h3 {
+    color: #BD93F9;
+    margin-bottom: 10px;
+  }
+  .weight-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .weight-label {
+    width: 110px;
+    font-size: 0.9em;
+    color: #ccc;
+  }
+  .weight-bar-bg {
+    flex: 1;
+    height: 18px;
+    background: #2C2C3C;
+    border-radius: 9px;
+    overflow: hidden;
+    margin: 0 10px;
+  }
+  .weight-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #BD93F9, #9B6DFF);
+    border-radius: 9px;
+    transition: width 0.6s ease;
+  }
+  .weight-value {
+    width: 55px;
+    text-align: right;
+    font-size: 0.9em;
+    color: #E4E4E4;
+  }
+  .error-msg {
+    background: rgba(255,85,85,0.15);
+    border: 1px solid #FF5555;
+    color: #FF5555;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+    display: none;
+  }
+  .api-config {
+    margin-bottom: 16px;
+  }
+  .api-config label {
+    color: #ccc;
+    font-size: 0.85em;
+  }
+  .api-config input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #2C2C3C;
+    color: #E4E4E4;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    margin-top: 4px;
+  }
+</style>
 
-    <div class="relative grid gap-8 px-6 py-8 lg:grid-cols-[1.35fr_0.85fr] lg:px-10 lg:py-10">
-      <div class="space-y-6">
-        <div class="inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-100">
-          Notebook Frontend
-        </div>
+<div class="titanic-container">
 
-        <div class="space-y-4">
-          <p class="text-sm uppercase tracking-[0.35em] text-cyan-200" style="font-family: 'Rajdhani', sans-serif;">
-            Passenger Manifest
-          </p>
-          <h2 class="max-w-3xl text-4xl font-semibold leading-tight md:text-5xl" style="font-family: 'Merriweather', serif;">
-            Send a passenger record into <code class="rounded bg-white/10 px-2 py-1 text-cyan-100">pandas-ml_titanic.ipynb</code> and read the survival signal back out.
-          </h2>
-          <p class="max-w-2xl text-base leading-7 text-slate-200 md:text-lg">
-            This page keeps the same API shape as the notebook demo, but restructures the experience into a live manifest, a prediction deck, and a notebook reference panel.
-          </p>
-        </div>
+  <div class="form-card">
+    <h2>Would You Have Survived the Titanic?</h2>
+    <p style="color:#aaa; margin-top:0;">Enter your passenger details below and find out your survival chances using machine learning.</p>
 
-        <div class="flex flex-wrap gap-3">
-          <a
-            href="{{ site.baseurl }}/ml/titanic"
-            class="inline-flex items-center justify-center rounded-full bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-          >
-            Open Notebook
-          </a>
-          <a
-            href="#prediction-console"
-            class="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-          >
-            Jump to Predictor
-          </a>
-        </div>
-      </div>
+    <div class="api-config">
+      <label for="api-url">Backend API URL</label>
+      <input type="text" id="api-url" value="http://127.0.0.1:8587/api/titanic/predict" placeholder="http://127.0.0.1:8587/api/titanic/predict">
+    </div>
 
-      <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-        <div class="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-          <p class="text-xs uppercase tracking-[0.25em] text-cyan-100">Notebook Route</p>
-          <p class="mt-3 text-lg font-semibold text-white">POST <code>/api/titanic/predict</code></p>
-          <p class="mt-2 text-sm text-slate-200">Accepts passenger JSON and returns <code>die</code> and <code>survive</code> probabilities.</p>
-        </div>
-        <div class="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-          <p class="text-xs uppercase tracking-[0.25em] text-cyan-100">Model Inputs</p>
-          <p class="mt-3 text-lg font-semibold text-white">Class, age, fare, group size</p>
-          <p class="mt-2 text-sm text-slate-200">Embarkation and sex are passed through exactly like the notebook preprocessing flow.</p>
-        </div>
-        <div class="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-          <p class="text-xs uppercase tracking-[0.25em] text-cyan-100">Why This Frontend</p>
-          <p class="mt-3 text-lg font-semibold text-white">Separate input from interpretation</p>
-          <p class="mt-2 text-sm text-slate-200">The manifest updates live before you send anything to the model.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" value="Your Name" />
+      </div>
+      <div class="form-group">
+        <label for="pclass">Passenger Class</label>
+        <select id="pclass">
+          <option value="1">1st Class</option>
+          <option value="2" selected>2nd Class</option>
+          <option value="3">3rd Class</option>
+        </select>
+      </div>
+    </div>
 
-  <div id="prediction-console" class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-    <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-      <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p class="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-700">Prediction Console</p>
-          <h2 class="mt-2 text-3xl font-semibold text-slate-950" style="font-family: 'Merriweather', serif;">Build a passenger record</h2>
-        </div>
-        <p class="max-w-sm text-sm leading-6 text-slate-500">
-          The <code>alone</code> flag is derived automatically from siblings/spouses and parents/children counts.
-        </p>
-      </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sex">Sex</label>
+        <select id="sex">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" value="30" min="0" max="100" />
+      </div>
+    </div>
 
-      <form id="titanic-form" class="mt-8 space-y-8">
-        <div class="grid gap-4 md:grid-cols-2">
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Passenger Name</span>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value="Avery Dawson"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-          </label>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sibsp">Siblings/Spouses Aboard</label>
+        <input type="number" id="sibsp" value="0" min="0" max="10" />
+      </div>
+      <div class="form-group">
+        <label for="parch">Parents/Children Aboard</label>
+        <input type="number" id="parch" value="0" min="0" max="10" />
+      </div>
+    </div>
 
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Passenger Class</span>
-            <select
-              id="pclass"
-              name="pclass"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-              <option value="1">1st Class</option>
-              <option value="2" selected>2nd Class</option>
-              <option value="3">3rd Class</option>
-            </select>
-          </label>
-        </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fare">Fare Paid ($)</label>
+        <input type="number" id="fare" value="16.00" min="0" max="600" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label for="embarked">Port of Embarkation</label>
+        <select id="embarked">
+          <option value="S">Southampton</option>
+          <option value="C">Cherbourg</option>
+          <option value="Q">Queenstown</option>
+        </select>
+      </div>
+    </div>
 
-        <div class="grid gap-4 md:grid-cols-2">
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Sex</span>
-            <select
-              id="sex"
-              name="sex"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </label>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="alone">Traveling Alone?</label>
+        <select id="alone">
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+    </div>
 
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Age</span>
-            <input
-              id="age"
-              name="age"
-              type="number"
-              min="0"
-              max="100"
-              value="30"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-          </label>
-        </div>
+    <button id="predict-btn">Predict My Survival</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
 
-        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Fare</span>
-            <input
-              id="fare"
-              name="fare"
-              type="number"
-              min="0"
-              max="600"
-              step="0.01"
-              value="16.00"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-          </label>
+  <div class="results-card" id="results-card">
+    <h2>Prediction Results</h2>
+    <p id="results-name" style="color:#ccc; margin-top:0;"></p>
 
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Embarked</span>
-            <select
-              id="embarked"
-              name="embarked"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-              <option value="S" selected>Southampton</option>
-              <option value="C">Cherbourg</option>
-              <option value="Q">Queenstown</option>
-            </select>
-          </label>
+    <div class="prob-container">
+      <div class="prob-box survive">
+        <div class="prob-label">Survival Chance</div>
+        <div class="prob-value" id="survive-prob">—</div>
+      </div>
+      <div class="prob-box die">
+        <div class="prob-label">Death Chance</div>
+        <div class="prob-value" id="die-prob">—</div>
+      </div>
+    </div>
 
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Siblings / Spouses</span>
-            <input
-              id="sibsp"
-              name="sibsp"
-              type="number"
-              min="0"
-              max="10"
-              value="0"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-          </label>
+    <div class="bar-container">
+      <div class="bar-bg">
+        <div class="bar-fill" id="survive-bar" style="width: 0%"></div>
+      </div>
+      <div class="bar-labels">
+        <span>0% Survival</span>
+        <span>100% Survival</span>
+      </div>
+    </div>
 
-          <label class="block space-y-2">
-            <span class="text-sm font-medium text-slate-700">Parents / Children</span>
-            <input
-              id="parch"
-              name="parch"
-              type="number"
-              min="0"
-              max="10"
-              value="0"
-              class="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-200"
-            >
-          </label>
-        </div>
+    <div class="weights-section">
+      <h3>Feature Importance</h3>
+      <p style="color:#888; font-size:0.85em; margin-top:0;">How much each factor matters in the prediction model:</p>
+      <div id="weights-container"></div>
+    </div>
+  </div>
 
-        <div class="rounded-[28px] bg-slate-950 p-6 text-white">
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-200">Quick Manifests</p>
-              <h3 class="mt-2 text-2xl font-semibold">Load a sample passenger</h3>
-            </div>
-            <p class="max-w-sm text-sm leading-6 text-slate-300">These are just starter records to test the notebook route faster.</p>
-          </div>
-
-          <div class="mt-5 grid gap-3 md:grid-cols-3">
-            <button
-              type="button"
-              data-preset="atlantic_suite"
-              class="preset-btn rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"
-            >
-              <span class="block text-sm font-semibold text-cyan-100">Atlantic Suite</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-300">Older first-class passenger with a larger fare and family aboard.</span>
-            </button>
-
-            <button
-              type="button"
-              data-preset="engine_room"
-              class="preset-btn rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"
-            >
-              <span class="block text-sm font-semibold text-cyan-100">Engine Room</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-300">Young third-class solo traveler with a low fare and no family group.</span>
-            </button>
-
-            <button
-              type="button"
-              data-preset="family_crossing"
-              class="preset-btn rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-left transition hover:border-cyan-300/40 hover:bg-cyan-300/10"
-            >
-              <span class="block text-sm font-semibold text-cyan-100">Family Crossing</span>
-              <span class="mt-2 block text-sm leading-6 text-slate-300">Second-class child traveling with parents and a midrange ticket.</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <button
-            id="predict-btn"
-            type="submit"
-            class="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-900 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            Run Notebook Prediction
-          </button>
-          <button
-            id="reset-btn"
-            type="button"
-            class="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
-          >
-            Reset Fields
-          </button>
-        </div>
-
-        <p id="error-msg" class="hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"></p>
-      </form>
-    </section>
-
-    <div class="space-y-6">
-      <section class="rounded-[28px] border border-slate-800 bg-slate-950 p-6 text-white shadow-sm lg:p-8">
-        <div class="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-200">Live Manifest</p>
-            <h2 class="mt-2 text-3xl font-semibold" style="font-family: 'Merriweather', serif;">Passenger summary before send</h2>
-          </div>
-          <span id="travel-mode-badge" class="inline-flex w-fit rounded-full border border-emerald-300/30 bg-emerald-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-emerald-100">
-            Solo Traveler
-          </span>
-        </div>
-
-        <p id="manifest-summary" class="mt-5 text-base leading-7 text-slate-200">
-          Avery Dawson boards from Southampton with a second-class ticket and a solo travel profile.
-        </p>
-
-        <div class="mt-6 grid gap-3 sm:grid-cols-2">
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p class="text-xs uppercase tracking-[0.24em] text-cyan-100">Cabin Tier</p>
-            <p id="manifest-class" class="mt-2 text-xl font-semibold text-white">2nd Class</p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p class="text-xs uppercase tracking-[0.24em] text-cyan-100">Party Size</p>
-            <p id="manifest-party" class="mt-2 text-xl font-semibold text-white">1 passenger</p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p class="text-xs uppercase tracking-[0.24em] text-cyan-100">Departure Port</p>
-            <p id="manifest-port" class="mt-2 text-xl font-semibold text-white">Southampton</p>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p class="text-xs uppercase tracking-[0.24em] text-cyan-100">Fare Signal</p>
-            <p id="manifest-fare" class="mt-2 text-xl font-semibold text-white">$16.00</p>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-[24px] border border-white/10 bg-white/5 p-5">
-          <label for="api-url" class="text-sm font-medium text-slate-200">Prediction endpoint</label>
-          <input
-            id="api-url"
-            type="text"
-            class="mt-3 w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20"
-          >
-          <p class="mt-3 text-xs leading-5 text-slate-400">
-            Defaults to the local Flask service on <code>localhost:8587</code> and falls back to the deployed Flask host elsewhere.
-          </p>
-        </div>
-      </section>
-
-      <section id="results-card" class="hidden rounded-[28px] border border-emerald-200 bg-emerald-50 p-6 shadow-sm lg:p-8">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-700">Prediction Output</p>
-            <h2 id="result-title" class="mt-2 text-3xl font-semibold text-slate-950" style="font-family: 'Merriweather', serif;">Awaiting result</h2>
-          </div>
-          <span id="result-badge" class="inline-flex w-fit rounded-full bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-white">
-            Not Run
-          </span>
-        </div>
-
-        <p id="result-copy" class="mt-5 text-base leading-7 text-slate-700">
-          Run the predictor to see the model output.
-        </p>
-
-        <div class="mt-6 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <div class="rounded-[28px] bg-white p-6 shadow-sm">
-            <div id="survival-ring" class="mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-slate-200">
-              <div class="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white text-center">
-                <span class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Survive</span>
-                <span id="survive-prob" class="mt-2 text-3xl font-semibold text-slate-950">0.0%</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div class="grid gap-4 sm:grid-cols-2">
-              <div class="rounded-3xl bg-white p-5 shadow-sm">
-                <p class="text-xs uppercase tracking-[0.22em] text-emerald-700">Survival Chance</p>
-                <p id="survive-prob-detail" class="mt-3 text-3xl font-semibold text-slate-950">0.0%</p>
-              </div>
-              <div class="rounded-3xl bg-white p-5 shadow-sm">
-                <p class="text-xs uppercase tracking-[0.22em] text-rose-700">Death Chance</p>
-                <p id="die-prob" class="mt-3 text-3xl font-semibold text-slate-950">0.0%</p>
-              </div>
-            </div>
-
-            <div class="rounded-3xl bg-white p-5 shadow-sm">
-              <div class="flex items-center justify-between text-sm text-slate-500">
-                <span>Outcome meter</span>
-                <span id="meter-label">50 / 50 split</span>
-              </div>
-              <div class="mt-4 h-4 overflow-hidden rounded-full bg-rose-200">
-                <div id="survive-bar" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-700" style="width: 0%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="weights-section" class="mt-6 hidden rounded-[24px] border border-slate-200 bg-white p-5">
-          <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h3 class="text-xl font-semibold text-slate-950">Global feature weights</h3>
-              <p class="mt-1 text-sm text-slate-500">
-                Rendered only if the backend sends <code>weights</code>. These are model-level importances, not passenger-specific explanations.
-              </p>
-            </div>
-            <span class="inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">
-              Decision Tree View
-            </span>
-          </div>
-
-          <div id="weights-list" class="mt-5 space-y-3"></div>
-        </div>
-      </section>
-
-      <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-        <div class="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-700">Notebook Pipeline</p>
-            <h2 class="mt-2 text-3xl font-semibold text-slate-950" style="font-family: 'Merriweather', serif;">What this frontend is hosting</h2>
-          </div>
-          <a
-            href="{{ site.baseurl }}/ml/titanic"
-            class="inline-flex w-fit items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-100"
-          >
-            Read Notebook
-          </a>
-        </div>
-
-        <div class="mt-6 grid gap-4 md:grid-cols-3">
-          <div class="rounded-3xl bg-slate-50 p-5">
-            <p class="text-xs uppercase tracking-[0.22em] text-cyan-700">1. Load Data</p>
-            <p class="mt-3 text-lg font-semibold text-slate-950">Seaborn Titanic dataset</p>
-            <p class="mt-2 text-sm leading-6 text-slate-600">The notebook starts from the standard Titanic dataset and narrows the columns used for training.</p>
-          </div>
-          <div class="rounded-3xl bg-slate-50 p-5">
-            <p class="text-xs uppercase tracking-[0.22em] text-cyan-700">2. Clean Inputs</p>
-            <p class="mt-3 text-lg font-semibold text-slate-950">Binary + one-hot preprocessing</p>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Sex and alone are converted to numeric values, while embarkation is one-hot encoded.</p>
-          </div>
-          <div class="rounded-3xl bg-slate-50 p-5">
-            <p class="text-xs uppercase tracking-[0.22em] text-cyan-700">3. Serve Predictions</p>
-            <p class="mt-3 text-lg font-semibold text-slate-950">Logistic regression via Flask</p>
-            <p class="mt-2 text-sm leading-6 text-slate-600">A Flask blueprint exposes the notebook-trained model at <code>/api/titanic/predict</code>.</p>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-[24px] bg-slate-950 p-5 text-sm leading-7 text-slate-200">
-          <p><span class="font-semibold text-white">Notebook source:</span> <code>_notebooks/CSP/big-ideas/big-idea-2/2025-02-19-pandas-ml_titanic.ipynb</code></p>
-          <p class="mt-3"><span class="font-semibold text-white">Payload sent:</span> <code>name</code>, <code>pclass</code>, <code>sex</code>, <code>age</code>, <code>sibsp</code>, <code>parch</code>, <code>fare</code>, <code>embarked</code>, and a derived <code>alone</code> flag.</p>
-        </div>
-      </section>
-    </div>
-  </div>
 </div>
 
-<script type="module" src="{{ site.baseurl }}/assets/js/titanic-predictor.js"></script>
+<script>
+  const predictBtn = document.getElementById('predict-btn');
+  const resultsCard = document.getElementById('results-card');
+  const errorMsg = document.getElementById('error-msg');
+
+  // Feature display names
+  const featureNames = {
+    pclass: 'Class',
+    sex: 'Sex',
+    age: 'Age',
+    sibsp: 'Siblings/Spouse',
+    parch: 'Parents/Children',
+    fare: 'Fare',
+    alone: 'Alone',
+    embarked_C: 'Cherbourg',
+    embarked_Q: 'Queenstown',
+    embarked_S: 'Southampton'
+  };
+
+  predictBtn.addEventListener('click', async function () {
+    errorMsg.style.display = 'none';
+    predictBtn.disabled = true;
+    predictBtn.textContent = 'Predicting...';
+
+    const sibsp = parseInt(document.getElementById('sibsp').value);
+    const parch = parseInt(document.getElementById('parch').value);
+    const aloneSelect = document.getElementById('alone').value;
+    const isAlone = (sibsp === 0 && parch === 0) || aloneSelect === 'true';
+
+    const passenger = {
+      name: document.getElementById('name').value,
+      pclass: parseInt(document.getElementById('pclass').value),
+      sex: document.getElementById('sex').value,
+      age: parseInt(document.getElementById('age').value),
+      sibsp: sibsp,
+      parch: parch,
+      fare: parseFloat(document.getElementById('fare').value),
+      embarked: document.getElementById('embarked').value,
+      alone: isAlone
+    };
+
+    const apiUrl = document.getElementById('api-url').value.trim();
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(passenger)
+      });
+
+      if (!response.ok) {
+        throw new Error('Server responded with status ' + response.status);
+      }
+
+      const data = await response.json();
+      displayResults(passenger, data);
+    } catch (err) {
+      errorMsg.textContent = 'Error: ' + err.message + '. Make sure the Flask backend is running.';
+      errorMsg.style.display = 'block';
+      resultsCard.style.display = 'none';
+    } finally {
+      predictBtn.disabled = false;
+      predictBtn.textContent = 'Predict My Survival';
+    }
+  });
+
+  function displayResults(passenger, data) {
+    resultsCard.style.display = 'block';
+
+    const survivePct = (data.survive * 100).toFixed(1);
+    const diePct = (data.die * 100).toFixed(1);
+
+    document.getElementById('results-name').textContent =
+      'Results for ' + passenger.name + ':';
+    document.getElementById('survive-prob').textContent = survivePct + '%';
+    document.getElementById('die-prob').textContent = diePct + '%';
+    document.getElementById('survive-bar').style.width = survivePct + '%';
+
+    // Render feature weights if provided
+    const container = document.getElementById('weights-container');
+    container.innerHTML = '';
+
+    if (data.weights) {
+      const maxWeight = Math.max(...Object.values(data.weights));
+      for (const [feature, weight] of Object.entries(data.weights)) {
+        const pct = (weight * 100).toFixed(1);
+        const barWidth = maxWeight > 0 ? ((weight / maxWeight) * 100).toFixed(1) : 0;
+        const displayName = featureNames[feature] || feature;
+
+        const row = document.createElement('div');
+        row.className = 'weight-row';
+        row.innerHTML =
+          '<span class="weight-label">' + displayName + '</span>' +
+          '<div class="weight-bar-bg"><div class="weight-bar-fill" style="width:' + barWidth + '%"></div></div>' +
+          '<span class="weight-value">' + pct + '%</span>';
+        container.appendChild(row);
+      }
+    }
+
+    resultsCard.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
