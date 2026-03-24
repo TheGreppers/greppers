@@ -3,7 +3,7 @@ layout: tailwindPost
 title: Titanic Survival Predictor
 description: Tailwind frontend for the Titanic notebook predictor.
 courses: { csp: {week: 25} }
-permalink: /titanic/predictor
+permalink: /titanic/predictor-aditya
 show_reading_time: false
 ---
 
