@@ -2,7 +2,7 @@
 layout: post 
 show_reading_time: false
 title: About
-description: My name is John, often referred to as "Mr M(ort)" in my CompSci classes. I am primary author and keeper of these CompSci materials.
+description: Hi
 ---
 
 ## As a conversation Starter
