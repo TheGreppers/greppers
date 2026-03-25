@@ -33,6 +33,8 @@ exclude:
   - _notebooks
   - _docx
   - venv
+  - sfifoundation.com
+  - node_backend
 
 
 # Build settings
