@@ -6,10 +6,9 @@ Description: "SFI certifies the safety gear that protects motorsports drivers wo
 
 Features:
   - "Instant Spec Search — ML-powered lookup replaces 8 static pages so inspectors find what they need in seconds"
-  - "QR Certification Scan — scan a product tag trackside to verify it's SFI-certified and not expired"
-  - "Manufacturer Self-Service — vendors manage their own listings, eliminating hours of manual staff updates"
+  - "Visual Part Detector — snap a photo of a car part to identify its SFI spec and certification status using image recognition"
+  - "Admin Spec Manager — staff update specifications through a simple dashboard instead of editing raw HTML"
   - "Mobile-First Redesign — accessible, responsive site that actually works on pit-lane devices"
-  - "Counterfeit Prevention — live certification records replace outdated static lists that put drivers at risk"
 
 Tech:
   - name: "Python / Flask"
@@ -28,7 +27,7 @@ Metrics:
     value: "~20 hrs/wk"
   - label: "Static Pages Replaced"
     value: "8 → 1"
-  - label: "QR Cert Verification"
-    value: "Instant"
+  - label: "Part ID Accuracy"
+    value: "> 90%"
   - label: "WCAG 2.1 AA Compliance"
     value: "Full"
