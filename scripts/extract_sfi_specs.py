@@ -12,7 +12,6 @@ Output:
 import re
 import json
 import os
-from html.parser import HTMLParser
 
 BASE_DIR = os.path.join(os.path.dirname(__file__), "..", "sfifoundation.com")
 OUTPUT_PATH = os.path.join(os.path.dirname(__file__), "..", "_data", "sfi_specs.json")
@@ -29,20 +28,28 @@ CATEGORY_PAGES = {
 
 
 def extract_specs_from_html(html_content, category):
-    """Parse a category page and extract all spec entries."""
+    """Parse a category page and extract all spec entries.
+
+    The actual SFI site HTML uses this structure per spec:
+        <p>Product Name<br />
+        <span ...><a ...>SFI Spec X.X</a> | <a ...>Manufacturers</a><br />
+        Effective Date: ...</span></p>
+
+    Some pages (chassis) use inline format:
+        <p>SFI Spec X.X Product Name ...</p>
+    """
     specs = []
 
-    # Find the main entry div content
-    entry_match = re.search(r'<div class="entry">(.*?)</div>\s*</div>', html_content, re.DOTALL)
+    # Find the entry div
+    entry_match = re.search(r'<div class="entry">(.*)', html_content, re.DOTALL)
     if not entry_match:
         return specs
 
     entry_html = entry_match.group(1)
 
-    # Split by <p> tags to get individual entries
+    # Split by <p> or <p ...> tags
     paragraphs = re.split(r'<p[^>]*>', entry_html)
 
-    # Track current sub-category heading
     current_subcategory = ""
 
     for p in paragraphs:
@@ -50,51 +57,54 @@ def extract_specs_from_html(html_content, category):
         if not p:
             continue
 
-        # Check if this is a sub-category heading (bold text without a spec link)
+        # Check for subcategory heading: bold text only
         heading_match = re.match(r'^<strong>([^<]+)</strong>\s*</p>', p)
         if heading_match:
             current_subcategory = heading_match.group(1).strip()
             continue
 
-        # Extract spec number(s) — needed for both formats
+        # Extract spec numbers from links or inline text
         spec_numbers = re.findall(r'SFI Spec ([\d.]+[A-Za-z]*)', p)
         if not spec_numbers:
             continue
 
-        # Extract effective date
+        # Extract product name — text before <br or <span
+        # Format 1: "Product Name<br />\n<span"
+        name_match = re.match(r'^([^<]+?)(?:\s*<br|<span)', p)
+        # Format 2: inline "SFI Spec X.X Product Name"
+        inline_match = re.match(r'^SFI Spec [\d.]+[A-Za-z]*\s+(.+?)(?:\s*<br|$)', p)
+
+        product_name = ""
+        if name_match:
+            candidate = name_match.group(1).strip()
+            # Skip non-product text
+            if candidate and len(candidate) >= 3 and not candidate.startswith("SFI Spec") \
+                    and not candidate.startswith("Click") and not candidate.startswith("For a") \
+                    and "establish uniform" not in candidate and "category below" not in candidate \
+                    and "Below you" not in candidate:
+                product_name = candidate
+        if not product_name and inline_match:
+            product_name = inline_match.group(1).strip()
+
+        if not product_name:
+            continue
+
+        # Clean HTML entities
+        product_name = product_name.replace("&#8211;", "–").replace("&amp;", "&")
+        product_name = re.sub(r'<[^>]+>', '', product_name).strip()
+
+        # Effective date
         date_match = re.search(r'Effective Date:\s*([^<]+)', p)
         effective_date = date_match.group(1).strip().rstrip(')') if date_match else ""
 
-        # Format 1: "SFI Spec 2.1C Product Name..." (chassis pages — no PDF links)
-        # Format 2: "Product Name\n<span>SFI Spec link | Manufacturers</span>"
-        inline_match = re.match(r'^SFI Spec [\d.]+[A-Za-z]*\s+(.+?)(?:<br|$)', p)
-        standard_match = re.match(r'^([^<]+?)(?:<br\s*/?>|\s*<span)', p)
+        # Spec PDFs
+        spec_pdfs = re.findall(r'href="[^"]*?/?(Spec[^"]*\.pdf)"', p, re.IGNORECASE)
 
-        if inline_match:
-            # Chassis-style: spec number is inline with product name
-            product_name = inline_match.group(1).strip()
-            # Clean HTML entities
-            product_name = product_name.replace("&#8211;", "–").replace("&amp;", "&")
-        elif standard_match:
-            product_name = standard_match.group(1).strip()
-            # Skip non-product paragraphs
-            if not product_name or len(product_name) < 3:
-                continue
-            if product_name.startswith("SFI Spec") or product_name.startswith("Click") or product_name.startswith("For a"):
-                continue
-            if "establish uniform" in product_name or "category below" in product_name:
-                continue
-        else:
-            continue
+        # Manufacturer PDFs
+        mfr_pdfs = re.findall(r'href="[^"]*?/?([\d.]+[A-Za-z]*\s*Manufacturers?\s*List\.pdf)"', p, re.IGNORECASE)
 
-        # Extract spec PDF URLs
-        spec_pdfs = re.findall(r'href="[^"]*/(Spec[^"]*\.pdf)"', p)
-
-        # Extract manufacturer PDF URLs
-        mfr_pdfs = re.findall(r'href="[^"]*/([\d.]+[A-Za-z]*\s*Manufacturers?\s*List\.pdf)"', p)
-
-        # Extract products list PDF if present
-        products_pdf = re.findall(r'href="[^"]*/(Current[\d.]+Products\.pdf)"', p)
+        # Products PDFs
+        products_pdfs = re.findall(r'href="[^"]*?/?(Current[\d.]*Products\.pdf)"', p, re.IGNORECASE)
 
         spec_entry = {
             "product_name": product_name,
@@ -103,7 +113,7 @@ def extract_specs_from_html(html_content, category):
             "spec_numbers": list(dict.fromkeys(spec_numbers)),
             "spec_pdfs": spec_pdfs,
             "manufacturer_pdfs": mfr_pdfs,
-            "products_pdfs": products_pdf,
+            "products_pdfs": products_pdfs,
             "effective_date": effective_date,
         }
         specs.append(spec_entry)
