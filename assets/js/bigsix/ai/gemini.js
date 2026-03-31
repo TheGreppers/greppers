@@ -3,7 +3,7 @@
 // Also owns shared UI helpers (button busy state, inline errors, loading spinners)
 // that every feature reuses — nothing here knows about resume or interview specifics.
 
-const FLASK_URL  = 'https://flask.opencodingsociety.com';
+const FLASK_URL  = 'https://greppers-be.opencodingsociety.com';
 const SPRING_URL = 'https://spring.opencodingsociety.com';
 
 // ── RESPONSIBILITY: Try the Flask /api/gemini endpoint only ──────────────────
