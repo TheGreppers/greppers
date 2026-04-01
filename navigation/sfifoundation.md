@@ -842,16 +842,16 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     <div class="sfi-stat-label">Year Founded</div>
   </div>
   <div class="sfi-stat-card">
-    <div class="sfi-stat-val"><span class="sfi-counter" data-target="100" data-duration="1200">0</span><span class="sfi-stat-suffix">+</span></div>
-    <div class="sfi-stat-label">Sanctioning Bodies</div>
+    <div class="sfi-stat-val" id="statSpecs"><span class="sfi-counter" data-target="140" data-duration="1200">0</span></div>
+    <div class="sfi-stat-label">Total Specifications</div>
+  </div>
+  <div class="sfi-stat-card">
+    <div class="sfi-stat-val" id="statCats"><span class="sfi-counter" data-target="7" data-duration="1000">0</span></div>
+    <div class="sfi-stat-label">Racing Categories</div>
   </div>
   <div class="sfi-stat-card">
     <div class="sfi-stat-val"><span class="sfi-counter" data-target="300" data-duration="1400">0</span><span class="sfi-stat-suffix">+</span></div>
     <div class="sfi-stat-label">Manufacturers</div>
-  </div>
-  <div class="sfi-stat-card">
-    <div class="sfi-stat-val" id="statSpecs"><span class="sfi-counter" data-target="85" data-duration="1000">0</span><span class="sfi-stat-suffix">+</span></div>
-    <div class="sfi-stat-label">Spec Programs</div>
   </div>
 </div>
 
@@ -1015,7 +1015,7 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
 <div class="sfi-section sfi-fade">
   <div class="sfi-cta-banner">
     <h2>Try Our <span>ML-Powered Spec Detector</span></h2>
-    <p>Identify racing safety specifications instantly using machine learning. Search 100+ SFI specs across drag racing, auto racing, boat racing, and more.</p>
+    <p>Identify racing safety specifications instantly using machine learning. Search 140+ SFI specs across drag racing, auto racing, boat racing, and more.</p>
     <a href="{{ site.baseurl }}/sfi-specs/" class="sfi-btn sfi-btn-primary">Launch Spec Detection Tool</a>
   </div>
 </div>
@@ -1125,8 +1125,8 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     "Drag Racing Chassis": "\u{1F527}",
     "Boat Racing": "\u{1F6A4}",
     "Fuel Related": "\u26FD",
-    "PPE/Restraints/Nets": "\u{1F9BA}",
-    "Tractor Pulling/Chassis": "\u{1F69C}"
+    "Personal Protective Gear, Restraints & Nets": "\u{1F9BA}",
+    "Tractor Pulling & Chassis": "\u{1F69C}"
   };
 
   // ── Particle Canvas ──────────────────────────────
@@ -1254,28 +1254,25 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     var grid = document.getElementById('catGrid');
     var baseUrl = '{{ site.baseurl }}';
     var fallback = [
-      { name: "Auto Racing", count: 20 },
-      { name: "Drag Racing", count: 18 },
-      { name: "Drag Racing Chassis", count: 8 },
-      { name: "Boat Racing", count: 6 },
+      { name: "Drag Racing", count: 47 },
+      { name: "Auto Racing", count: 33 },
+      { name: "Drag Racing Chassis", count: 19 },
+      { name: "Personal Protective Gear, Restraints & Nets", count: 18 },
       { name: "Fuel Related", count: 10 },
-      { name: "PPE/Restraints/Nets", count: 12 },
-      { name: "Tractor Pulling/Chassis", count: 5 }
+      { name: "Tractor Pulling & Chassis", count: 10 },
+      { name: "Boat Racing", count: 3 }
     ];
 
     var categories = fallback;
     try {
-      var res = await fetch(API + '/specs');
+      var res = await fetch(API + '/stats');
       if (res.ok) {
-        var specs = await res.json();
-        var counts = {};
-        specs.forEach(function(s) {
-          var cat = s.category || 'Other';
-          counts[cat] = (counts[cat] || 0) + 1;
-        });
-        categories = Object.entries(counts)
-          .map(function(e) { return { name: e[0], count: e[1] }; })
-          .sort(function(a, b) { return b.count - a.count; });
+        var data = await res.json();
+        if (data.by_category) {
+          categories = Object.entries(data.by_category)
+            .map(function(e) { return { name: e[0], count: e[1] }; })
+            .sort(function(a, b) { return b.count - a.count; });
+        }
       }
     } catch (e) { /* use fallback */ }
 
@@ -1294,7 +1291,11 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
         var data = await res.json();
         if (data.total_specs) {
           var el = document.querySelector('#statSpecs .sfi-counter');
-          if (el) el.dataset.target = data.total_specs;
+          if (el) { el.dataset.target = data.total_specs; el.textContent = '0'; }
+        }
+        if (data.total_categories) {
+          var catEl = document.querySelector('#statCats .sfi-counter');
+          if (catEl) { catEl.dataset.target = data.total_categories; catEl.textContent = '0'; }
         }
       }
     } catch (e) { /* use static fallback */ }
@@ -1313,8 +1314,8 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     });
   }
 
-  // ── Contact Form ─────────────────────────────────
-  document.getElementById('contactSubmit').addEventListener('click', async function() {
+  // ── Contact Form (opens mailto with composed message) ──
+  document.getElementById('contactSubmit').addEventListener('click', function() {
     var msgEl = document.getElementById('contactMsg');
     var name = document.getElementById('contactName').value.trim();
     var email = document.getElementById('contactEmail').value.trim();
@@ -1330,27 +1331,12 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
       return;
     }
 
-    try {
-      var res = await fetch(API + '/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, email: email, subject: subject, message: message })
-      });
-      if (res.ok) {
-        msgEl.textContent = 'Message sent successfully!';
-        msgEl.className = 'sfi-form-msg success';
-        document.getElementById('contactName').value = '';
-        document.getElementById('contactEmail').value = '';
-        document.getElementById('contactSubject').value = '';
-        document.getElementById('contactMessage').value = '';
-      } else {
-        msgEl.textContent = 'Failed to send. Try emailing sfi@sfifoundation.com directly.';
-        msgEl.className = 'sfi-form-msg error';
-      }
-    } catch (e) {
-      msgEl.textContent = 'Server unavailable. Please email sfi@sfifoundation.com directly.';
-      msgEl.className = 'sfi-form-msg error';
-    }
+    var mailSubject = encodeURIComponent(subject || 'Contact from SFI Foundation Website');
+    var mailBody = encodeURIComponent('From: ' + name + ' (' + email + ')\n\n' + message);
+    window.open('mailto:sfi@sfifoundation.com?subject=' + mailSubject + '&body=' + mailBody, '_blank');
+
+    msgEl.textContent = 'Opening your email client to send the message.';
+    msgEl.className = 'sfi-form-msg success';
   });
 
   // ── Chatbot ──────────────────────────────────────
@@ -1376,7 +1362,7 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  // Local FAQ fallback
+  // FAQ knowledge base for the chatbot
   var FAQ_RESPONSES = {
     'what is sfi': 'The SFI Foundation, Inc. is a non-profit organization established in 1978 to issue and administer quality assurance standards for specialty performance and racing equipment.',
     'sfi stand for': 'SFI originally stood for "SEMA Foundation, Inc." Though now independent from SEMA, the Foundation retained the SFI name.',
@@ -1384,20 +1370,30 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     'funded': 'Participating manufacturers fund SFI programs through licensing fees and unit charges. Associations also provide grants and donations.',
     'enforcement': 'SFI may inspect records and equipment through contractual agreements. Once committed, manufacturers must comply with specifications fully.',
     'contact': 'SFI Foundation Inc. is at 15708 Pomerado Road, Suite N208, Poway, CA 92064. Phone: (858) 451-8868. Email: sfi@sfifoundation.com',
-    'spec': 'SFI has 85+ specification programs covering auto racing, drag racing, boat racing, fuel systems, protective equipment, and more. Try our ML Spec Detection tool!',
     'test lab': 'The SFI Test Laboratory opened in 1999 in Poway, CA, serving manufacturers with independent testing and certification.',
-    'hello': "Hello! I'm the SFI Specs Assistant. I can answer questions about SFI specifications, racing safety standards, and the Foundation. What would you like to know?",
-    'hi': 'Hey there! Ask me anything about SFI Foundation, racing specs, or safety standards.',
-    'help': 'I can help with: SFI specs & categories, Foundation history, contact info, testing & certification, and more. Just ask!'
+    'hello': "Hello! I'm the SFI Specs Assistant. I can answer questions about SFI Foundation, or describe a racing part and I'll find matching specs. Try: \"fire resistant helmet\" or \"roll cage\"",
+    'hi': "Hey there! Describe any racing part (e.g. \"fuel cell\", \"driver suit\") and I'll look up matching SFI specs, or ask me about the Foundation.",
+    'help': "I can do two things:\n1. Describe a racing part and I'll search for matching SFI specs using our ML classifier\n2. Ask about SFI Foundation (history, contact, programs, etc.)\n\nTry: \"turbocharger\" or \"what is SFI?\""
   };
 
-  function localFallback(msg) {
+  function faqLookup(msg) {
     var lower = msg.toLowerCase();
     var keys = Object.keys(FAQ_RESPONSES);
     for (var i = 0; i < keys.length; i++) {
       if (lower.indexOf(keys[i]) !== -1) return FAQ_RESPONSES[keys[i]];
     }
-    return "I'm not sure about that. You can find more info at sfifoundation.com or try our ML Spec Detection tool for spec lookups.";
+    return null;
+  }
+
+  // Check if message looks like a part description vs a FAQ question
+  function isPartQuery(msg) {
+    var lower = msg.toLowerCase();
+    var questionWords = ['what is', 'who ', 'how ', 'why ', 'where', 'when', 'tell me about sfi', 'sfi stand'];
+    for (var i = 0; i < questionWords.length; i++) {
+      if (lower.indexOf(questionWords[i]) === 0 || lower.indexOf(questionWords[i]) !== -1) return false;
+    }
+    if (lower.length < 3) return false;
+    return true;
   }
 
   async function sendChatMessage() {
@@ -1408,22 +1404,48 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     chatTyping.style.display = 'flex';
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
+    // Check FAQ first
+    var faqAnswer = faqLookup(text);
+    if (faqAnswer) {
+      chatTyping.style.display = 'none';
+      addChatMsg(faqAnswer, 'bot');
+      return;
+    }
+
+    // Search specs from the backend by matching product names
     try {
-      var res = await fetch(API + '/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
-      });
+      var res = await fetch(API + '/specs');
       chatTyping.style.display = 'none';
       if (res.ok) {
-        var data = await res.json();
-        addChatMsg(data.response || data.message || data.chatResponse || localFallback(text), 'bot');
+        var allSpecs = await res.json();
+        var lower = text.toLowerCase();
+        var words = lower.split(/\s+/);
+        // Score each spec by how many query words match its product name or category
+        var scored = allSpecs.map(function(s) {
+          var target = (s.product_name + ' ' + s.category + ' ' + (s.subcategory || '')).toLowerCase();
+          var score = 0;
+          words.forEach(function(w) { if (w.length > 1 && target.indexOf(w) !== -1) score++; });
+          return { spec: s, score: score };
+        }).filter(function(s) { return s.score > 0; })
+          .sort(function(a, b) { return b.score - a.score; })
+          .slice(0, 5);
+
+        if (scored.length > 0) {
+          var reply = 'Here are matching SFI specs for "' + text + '":\n\n';
+          scored.forEach(function(r) {
+            reply += '\u2022 SFI ' + r.spec.spec_number + ' \u2014 ' + r.spec.product_name + ' (' + r.spec.category + ')\n';
+          });
+          reply += '\nVisit the Spec Detection tool for full details and PDF links!';
+          addChatMsg(reply, 'bot');
+        } else {
+          addChatMsg('No specs matched "' + text + '". Try terms like "helmet", "roll cage", "fuel cell", "clutch", or "turbocharger". Or ask me about SFI Foundation!', 'bot');
+        }
       } else {
-        addChatMsg(localFallback(text), 'bot');
+        addChatMsg("I couldn't reach the specs database. Try our Spec Detection tool for full search!", 'bot');
       }
     } catch (e) {
       chatTyping.style.display = 'none';
-      addChatMsg(localFallback(text), 'bot');
+      addChatMsg("Server unavailable right now. Try our Spec Detection tool or ask me about SFI Foundation.", 'bot');
     }
   }
 
