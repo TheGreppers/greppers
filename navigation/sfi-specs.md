@@ -1,62 +1,36 @@
 ---
-layout: post
+layout: sfi
 title: SFI Part Detection
+description: Search and classify SFI motorsports safety specifications using machine learning.
 permalink: /sfi-specs/
-search_exclude: true
 ---
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-/* ── Reset & Variables ─────────────────────────── */
-:root {
-  --sfi-dark: #0d1117;
-  --sfi-surface: #161b27;
-  --sfi-surface2: #1e2535;
-  --sfi-border: rgba(240,165,0,0.15);
-  --sfi-gold: #F0A500;
-  --sfi-cyan: #00d4ff;
-  --sfi-text: #e6edf3;
-  --sfi-muted: #8b949e;
-  --sfi-green: #3fb950;
-  --sfi-red: #f85149;
-}
+/* ── Page-specific styles for Spec Search ──────── */
 
-/* ── Full-width breakout ───────────────────────── */
-.sfi-full {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
-/* ── Hero Section ──────────────────────────────── */
-.sfi-hero {
-  background: linear-gradient(135deg, #0d1117 0%, #1a1025 40%, #0d1117 100%);
-  padding: 80px 20px 60px;
+/* Hero override for this page */
+.specs-hero {
+  background: linear-gradient(135deg, var(--sfi-bg) 0%, #1a1025 40%, var(--sfi-bg) 100%);
+  padding: 120px 20px 60px;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
-.sfi-hero::before {
+.specs-hero::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
   background: radial-gradient(ellipse at 30% 50%, rgba(240,165,0,0.06) 0%, transparent 60%),
               radial-gradient(ellipse at 70% 50%, rgba(0,212,255,0.04) 0%, transparent 60%);
-  animation: sfiPulse 8s ease-in-out infinite alternate;
+  animation: specsPulse 8s ease-in-out infinite alternate;
 }
-@keyframes sfiPulse {
+@keyframes specsPulse {
   0% { transform: scale(1) rotate(0deg); }
   100% { transform: scale(1.05) rotate(2deg); }
 }
-.sfi-hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
-.sfi-hero h1 {
+.specs-hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+.specs-hero h1 {
   font-family: 'Oswald', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
@@ -65,39 +39,17 @@ search_exclude: true
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-.sfi-hero h1 span { color: var(--sfi-gold); }
-.sfi-hero-tag {
+.specs-hero h1 span { color: var(--sfi-gold); }
+.specs-hero-tag {
   font-family: 'Inter', sans-serif;
   font-size: 1.15rem;
   color: var(--sfi-muted);
   margin-bottom: 32px;
   line-height: 1.6;
 }
-.sfi-hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.sfi-btn {
-  font-family: 'Inter', sans-serif;
-  padding: 14px 32px;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.3s;
-  border: none;
-}
-.sfi-btn-primary {
-  background: linear-gradient(135deg, var(--sfi-gold), #d49400);
-  color: #000;
-}
-.sfi-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(240,165,0,0.3); }
-.sfi-btn-secondary {
-  background: transparent;
-  color: var(--sfi-cyan);
-  border: 2px solid var(--sfi-cyan);
-}
-.sfi-btn-secondary:hover { background: rgba(0,212,255,0.1); transform: translateY(-2px); }
+.specs-hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 
-/* ── Stats Bar ─────────────────────────────────── */
+/* Stats Bar */
 .sfi-stats-bar {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -109,7 +61,7 @@ search_exclude: true
   z-index: 2;
 }
 .sfi-stat-card {
-  background: rgba(22,27,39,0.85);
+  background: rgba(13,18,32,0.85);
   backdrop-filter: blur(12px);
   border: 1px solid var(--sfi-border);
   border-radius: 14px;
@@ -133,7 +85,7 @@ search_exclude: true
   margin-top: 4px;
 }
 
-/* ── Section Containers ────────────────────────── */
+/* Section Containers */
 .sfi-section {
   max-width: 1000px;
   margin: 0 auto 48px;
@@ -149,12 +101,12 @@ search_exclude: true
   border-bottom: 2px solid rgba(240,165,0,0.2);
 }
 
-/* ── ML Classifier ─────────────────────────────── */
+/* ML Classifier */
 .sfi-classify-wrap {
-  background: rgba(22,27,39,0.7);
+  background: rgba(13,18,32,0.7);
   backdrop-filter: blur(12px);
   border: 1px solid var(--sfi-border);
-  border-radius: 16px;
+  border-radius: var(--sfi-radius);
   padding: 32px;
 }
 .sfi-classify-input-row { display: flex; gap: 12px; margin-bottom: 20px; }
@@ -165,7 +117,7 @@ search_exclude: true
   font-size: 1.05rem;
   border: 2px solid rgba(240,165,0,0.2);
   border-radius: 12px;
-  background: var(--sfi-dark);
+  background: var(--sfi-bg);
   color: var(--sfi-text);
   transition: border-color 0.2s;
 }
@@ -173,7 +125,7 @@ search_exclude: true
 .sfi-classify-input::placeholder { color: #555; }
 .sfi-classify-btn {
   padding: 16px 28px;
-  background: linear-gradient(135deg, var(--sfi-gold), #d49400);
+  background: linear-gradient(135deg, var(--sfi-gold), var(--sfi-gold-dim));
   color: #000;
   border: none;
   border-radius: 12px;
@@ -198,7 +150,7 @@ search_exclude: true
   font-family: 'Inter', sans-serif;
 }
 
-/* ── Result Cards ──────────────────────────────── */
+/* Result Cards */
 .sfi-result-card {
   background: var(--sfi-surface);
   border: 1px solid rgba(240,165,0,0.1);
@@ -270,7 +222,7 @@ search_exclude: true
   transition: width 0.5s ease;
 }
 
-/* ── Spec Search ───────────────────────────────── */
+/* Spec Search */
 .sfi-search-box {
   width: 100%;
   padding: 14px 18px;
@@ -278,7 +230,7 @@ search_exclude: true
   font-size: 1rem;
   border: 2px solid rgba(240,165,0,0.2);
   border-radius: 12px;
-  background: var(--sfi-dark);
+  background: var(--sfi-bg);
   color: var(--sfi-text);
   margin-bottom: 12px;
   box-sizing: border-box;
@@ -317,12 +269,13 @@ search_exclude: true
   border-bottom: 2px solid var(--sfi-gold);
   color: var(--sfi-gold);
   position: sticky;
-  top: 0;
-  background: var(--sfi-dark);
+  top: 64px;
+  background: var(--sfi-bg);
   font-weight: 600;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  z-index: 5;
 }
 .sfi-table td {
   padding: 10px;
@@ -339,14 +292,14 @@ search_exclude: true
   font-family: 'Inter', sans-serif;
 }
 
-/* ── Categories Grid ───────────────────────────── */
+/* Categories Grid */
 .sfi-cat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 14px;
 }
 .sfi-cat-card {
-  background: rgba(22,27,39,0.7);
+  background: rgba(13,18,32,0.7);
   backdrop-filter: blur(8px);
   border: 1px solid var(--sfi-border);
   border-radius: 12px;
@@ -374,12 +327,12 @@ search_exclude: true
   font-size: 0.75rem;
 }
 
-/* ── About Section ─────────────────────────────── */
+/* About Card */
 .sfi-about-card {
-  background: rgba(22,27,39,0.7);
+  background: rgba(13,18,32,0.7);
   backdrop-filter: blur(12px);
   border: 1px solid var(--sfi-border);
-  border-radius: 16px;
+  border-radius: var(--sfi-radius);
   padding: 32px;
 }
 .sfi-about-card p {
@@ -392,7 +345,7 @@ search_exclude: true
 .sfi-about-card a { color: var(--sfi-cyan); text-decoration: none; }
 .sfi-about-card a:hover { text-decoration: underline; }
 
-/* ── Admin Accordion ───────────────────────────── */
+/* Admin Accordion */
 .sfi-admin-toggle {
   width: 100%;
   padding: 14px 20px;
@@ -411,10 +364,7 @@ search_exclude: true
   align-items: center;
 }
 .sfi-admin-toggle:hover { background: var(--sfi-surface2); }
-.sfi-admin-body {
-  display: none;
-  margin-top: 16px;
-}
+.sfi-admin-body { display: none; margin-top: 16px; }
 .sfi-admin-body.open { display: block; }
 .admin-stats {
   display: grid;
@@ -444,7 +394,7 @@ search_exclude: true
   padding: 10px 12px;
   border: 1px solid rgba(240,165,0,0.15);
   border-radius: 8px;
-  background: var(--sfi-dark);
+  background: var(--sfi-bg);
   color: var(--sfi-text);
   font-size: 0.9rem;
   width: 100%;
@@ -491,11 +441,10 @@ search_exclude: true
 .admin-msg.success { display: block; background: rgba(63,185,80,0.12); color: var(--sfi-green); border: 1px solid rgba(63,185,80,0.25); }
 .admin-msg.error { display: block; background: rgba(248,81,73,0.12); color: var(--sfi-red); border: 1px solid rgba(248,81,73,0.25); }
 
-/* ── Loading Spinner ───────────────────────────── */
+/* Loading Spinner */
 .sfi-spinner {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 20px; height: 20px;
   border: 3px solid rgba(240,165,0,0.2);
   border-top-color: var(--sfi-gold);
   border-radius: 50%;
@@ -503,71 +452,51 @@ search_exclude: true
 }
 @keyframes sfiSpin { to { transform: rotate(360deg); } }
 
-/* ── Footer ────────────────────────────────────── */
-.sfi-footer {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--sfi-muted);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  border-top: 1px solid var(--sfi-border);
-}
-.sfi-footer a { color: var(--sfi-cyan); text-decoration: none; }
-.sfi-footer a:hover { text-decoration: underline; }
-
-/* ── Responsive ────────────────────────────────── */
+/* Responsive */
 @media (max-width: 600px) {
-  .sfi-hero h1 { font-size: 2.2rem; }
+  .specs-hero h1 { font-size: 2.2rem; }
   .sfi-classify-input-row { flex-direction: column; }
   .sfi-stats-bar { grid-template-columns: repeat(2, 1fr); }
   .admin-row { grid-template-columns: 1fr; }
 }
 </style>
 
-<!-- ═══════════════════════════════════════════════════
-     HERO SECTION
-     ═══════════════════════════════════════════════════ -->
-<div class="sfi-full">
-  <div class="sfi-hero">
-    <div class="sfi-hero-content">
-      <h1>SFI <span>Part Detection</span></h1>
-      <p class="sfi-hero-tag">
-        Identify racing safety specifications instantly using machine learning.<br>
-        Search 100+ SFI specs across drag racing, auto racing, boat racing, and more.
-      </p>
-      <div class="sfi-hero-btns">
-        <a href="#classify" class="sfi-btn sfi-btn-primary">Classify a Part</a>
-        <a href="#search" class="sfi-btn sfi-btn-secondary">Browse All Specs</a>
-      </div>
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="specs-hero">
+  <div class="specs-hero-content">
+    <h1>SFI <span>Part Detection</span></h1>
+    <p class="specs-hero-tag">
+      Identify racing safety specifications instantly using machine learning.<br>
+      Search 100+ SFI specs across drag racing, auto racing, boat racing, and more.
+    </p>
+    <div class="specs-hero-btns">
+      <a href="#classify" class="sfi-btn sfi-btn-primary">Classify a Part</a>
+      <a href="#search" class="sfi-btn sfi-btn-secondary">Browse All Specs</a>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     STATS BAR
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════ STATS BAR ═══════════════ -->
 <div class="sfi-stats-bar" id="statsBar">
   <div class="sfi-stat-card">
-    <div class="sfi-stat-val" id="statSpecs">—</div>
+    <div class="sfi-stat-val" id="statSpecs">&mdash;</div>
     <div class="sfi-stat-label">Total Specs</div>
   </div>
   <div class="sfi-stat-card">
-    <div class="sfi-stat-val" id="statCats">—</div>
+    <div class="sfi-stat-val" id="statCats">&mdash;</div>
     <div class="sfi-stat-label">Categories</div>
   </div>
   <div class="sfi-stat-card">
-    <div class="sfi-stat-val" id="statSubs">—</div>
+    <div class="sfi-stat-val" id="statSubs">&mdash;</div>
     <div class="sfi-stat-label">Subcategories</div>
   </div>
   <div class="sfi-stat-card">
-    <div class="sfi-stat-val" id="statModel">—</div>
+    <div class="sfi-stat-val" id="statModel">&mdash;</div>
     <div class="sfi-stat-label">ML Accuracy</div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ML PART CLASSIFIER
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════ ML CLASSIFIER ═══════════════ -->
 <div class="sfi-section" id="classify">
   <h2 class="sfi-section-title">ML Part Classifier</h2>
   <div class="sfi-classify-wrap">
@@ -584,9 +513,7 @@ search_exclude: true
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     SPEC SEARCH
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════ SPEC SEARCH ═══════════════ -->
 <div class="sfi-section" id="search">
   <h2 class="sfi-section-title">Specification Database</h2>
 
@@ -617,17 +544,13 @@ search_exclude: true
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     CATEGORIES GRID
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════ CATEGORIES ═══════════════ -->
 <div class="sfi-section" id="categories">
   <h2 class="sfi-section-title">Browse by Category</h2>
   <div class="sfi-cat-grid" id="catGrid"></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ABOUT
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════ ABOUT ═══════════════ -->
 <div class="sfi-section">
   <h2 class="sfi-section-title">About SFI Foundation</h2>
   <div class="sfi-about-card">
@@ -638,19 +561,17 @@ search_exclude: true
       boat racing, tractor pulling, and more.
     </p>
     <p>
-      Each specification number corresponds to a specific type of racing equipment — from driver suits
+      Each specification number corresponds to a specific type of racing equipment &mdash; from driver suits
       and helmets to roll cages, fuel cells, supercharger restraints, and turbochargers. Our ML model
       can identify the correct specification from a plain-text description of any part.
     </p>
     <p>
-      Learn more at <a href="https://www.sfifoundation.com" target="_blank">sfifoundation.com</a>
+      Learn more at <a href="/about/">About SFI Foundation</a>
     </p>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ADMIN PANEL (accordion)
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════ ADMIN PANEL ═══════════════ -->
 <div class="sfi-section">
   <button class="sfi-admin-toggle" id="adminToggle">
     Admin Panel <span id="adminArrow">&#9654;</span>
@@ -700,17 +621,6 @@ search_exclude: true
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     FOOTER
-     ═══════════════════════════════════════════════════ -->
-<div class="sfi-section">
-  <div class="sfi-footer">
-    SFI Part Detection &mdash; Built by <a href="https://github.com/TheGreppers" target="_blank">The Greppers</a>
-    &bull; Data sourced from <a href="https://www.sfifoundation.com" target="_blank">SFI Foundation</a>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════ -->
 <script>
 // ── API Configuration ────────────────────────────
 const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
@@ -728,9 +638,7 @@ const CATEGORY_ICONS = {
   "Tractor Pulling": "\u{1F69C}",
 };
 
-// ═══════════════════════════════════════════════════
-// STATS BAR
-// ═══════════════════════════════════════════════════
+// ═══════════════ STATS BAR ═══════════════
 async function loadStats() {
   try {
     const [statsRes, modelRes] = await Promise.all([
@@ -739,21 +647,15 @@ async function loadStats() {
     ]);
     const stats = await statsRes.json();
     const model = await modelRes.json();
-
     document.getElementById('statSpecs').textContent = stats.total_specs || 0;
     document.getElementById('statCats').textContent = stats.total_categories || 0;
     document.getElementById('statSubs').textContent = stats.total_subcategories || 0;
     document.getElementById('statModel').textContent = model.trained
-      ? (model.accuracy * 100).toFixed(0) + '%'
-      : 'Offline';
-  } catch (e) {
-    console.log('Stats load error:', e);
-  }
+      ? (model.accuracy * 100).toFixed(0) + '%' : 'Offline';
+  } catch (e) { console.log('Stats load error:', e); }
 }
 
-// ═══════════════════════════════════════════════════
-// ML CLASSIFIER
-// ═══════════════════════════════════════════════════
+// ═══════════════ ML CLASSIFIER ═══════════════
 document.getElementById('classifyBtn').addEventListener('click', classifyPart);
 document.getElementById('classifyInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') classifyPart();
@@ -762,12 +664,10 @@ document.getElementById('classifyInput').addEventListener('keydown', e => {
 async function classifyPart() {
   const input = document.getElementById('classifyInput').value.trim();
   if (!input) return;
-
   const countEl = document.getElementById('classifyCount');
   const resultsEl = document.getElementById('classifyResults');
   countEl.innerHTML = '<span class="sfi-spinner"></span> Classifying...';
   resultsEl.innerHTML = '';
-
   try {
     const res = await fetch(`${API}/classify`, {
       method: 'POST',
@@ -775,20 +675,16 @@ async function classifyPart() {
       body: JSON.stringify({ description: input })
     });
     const data = await res.json();
-
     countEl.textContent = `Found ${data.count} match(es) \u2014 Predicted category: ${data.predicted_category} (${(data.category_confidence * 100).toFixed(0)}% confidence)`;
-
     if (!data.predictions || !data.predictions.length) {
       resultsEl.innerHTML = '<div class="sfi-no-results">No matching specs found.</div>';
       return;
     }
-
     resultsEl.innerHTML = data.predictions.map(p => {
       const confPct = (p.confidence * 100).toFixed(1);
       const pdfs = [];
       if (p.spec_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${p.spec_pdf}" target="_blank">Spec PDF</a>`);
       if (p.manufacturer_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${p.manufacturer_pdf}" target="_blank">Manufacturers</a>`);
-
       return `
         <div class="sfi-result-card">
           <div class="sfi-result-header">
@@ -804,17 +700,14 @@ async function classifyPart() {
           <div class="sfi-conf-bar">
             <div class="sfi-conf-fill" style="width:${confPct}%"></div>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
   } catch (e) {
     countEl.textContent = 'Error connecting to API \u2014 is the backend running?';
   }
 }
 
-// ═══════════════════════════════════════════════════
-// SPEC SEARCH
-// ═══════════════════════════════════════════════════
+// ═══════════════ SPEC SEARCH ═══════════════
 let specs = [];
 let activeCategory = 'all';
 
@@ -824,6 +717,12 @@ async function loadSpecs() {
     specs = await res.json();
     buildFilters();
     buildCategoryGrid();
+    // Check for category from landing page
+    const savedCat = localStorage.getItem('sfiCat');
+    if (savedCat) {
+      localStorage.removeItem('sfiCat');
+      activeCategory = savedCat;
+    }
     renderSearch();
   } catch (e) {
     document.getElementById('sfiNoResults').style.display = 'block';
@@ -871,7 +770,6 @@ function renderSearch() {
   const tbody = document.getElementById('sfiBody');
   const noRes = document.getElementById('sfiNoResults');
   const countEl = document.getElementById('sfiCount');
-
   const filtered = specs.filter(s => {
     if (activeCategory !== 'all' && s.category !== activeCategory) return false;
     if (q) {
@@ -880,12 +778,9 @@ function renderSearch() {
     }
     return true;
   });
-
   countEl.textContent = `Showing ${filtered.length} of ${specs.length} specs`;
-
   if (!filtered.length) { tbody.innerHTML = ''; noRes.style.display = 'block'; return; }
   noRes.style.display = 'none';
-
   tbody.innerHTML = filtered.map(s => {
     const pdfs = [];
     if (s.spec_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.spec_pdf}" target="_blank">Spec</a>`);
@@ -909,18 +804,13 @@ document.getElementById('sfiFilters').addEventListener('click', e => {
   renderSearch();
 });
 
-// ═══════════════════════════════════════════════════
-// ADMIN PANEL
-// ═══════════════════════════════════════════════════
+// ═══════════════ ADMIN PANEL ═══════════════
 document.getElementById('adminToggle').addEventListener('click', () => {
   const body = document.getElementById('adminBody');
   const arrow = document.getElementById('adminArrow');
   body.classList.toggle('open');
   arrow.innerHTML = body.classList.contains('open') ? '&#9660;' : '&#9654;';
-  if (body.classList.contains('open')) {
-    loadAdminStats();
-    loadAdminTable();
-  }
+  if (body.classList.contains('open')) { loadAdminStats(); loadAdminTable(); }
 });
 
 function showMsg(text, type) {
@@ -937,8 +827,7 @@ async function loadAdminStats() {
     document.getElementById('adminStats').innerHTML = `
       <div class="admin-stat"><div class="admin-stat-val">${d.total_specs}</div><div class="admin-stat-label">Total Specs</div></div>
       <div class="admin-stat"><div class="admin-stat-val">${d.total_categories}</div><div class="admin-stat-label">Categories</div></div>
-      <div class="admin-stat"><div class="admin-stat-val">${d.total_subcategories}</div><div class="admin-stat-label">Subcategories</div></div>
-    `;
+      <div class="admin-stat"><div class="admin-stat-val">${d.total_subcategories}</div><div class="admin-stat-label">Subcategories</div></div>`;
   } catch (e) {}
 }
 
@@ -956,8 +845,7 @@ async function loadAdminTable() {
           <button class="admin-btn" style="padding:4px 10px;font-size:.75rem;" onclick="editSpec(${s.id})">Edit</button>
           <button class="admin-btn-danger" style="padding:4px 10px;font-size:.75rem;" onclick="deleteSpec(${s.id})">Del</button>
         </td>
-      </tr>
-    `).join('');
+      </tr>`).join('');
   } catch (e) {}
 }
 
@@ -1006,12 +894,10 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     manufacturer_pdf: document.getElementById('fMfrPdf').value.trim(),
     products_pdf: document.getElementById('fProdPdf').value.trim(),
   };
-
   if (!body.product_name || !body.spec_number || !body.category) {
     showMsg('Product name, spec number, and category are required', 'error');
     return;
   }
-
   const editId = document.getElementById('editId').value;
   try {
     let res;
@@ -1027,9 +913,7 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
 
 document.getElementById('cancelBtn').addEventListener('click', clearForm);
 
-// ═══════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════
+// ═══════════════ INIT ═══════════════
 loadStats();
 loadSpecs();
 </script>

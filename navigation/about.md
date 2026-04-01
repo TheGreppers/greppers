@@ -1,138 +1,89 @@
 ---
-layout: post 
-show_reading_time: false
-title: About
-description: Hi
+layout: sfi
+title: About SFI Foundation
+description: A non-profit organization established to issue and administer standards for motorsports safety equipment.
+permalink: /about/
 ---
 
-## As a conversation Starter
-
-Here are some places I have lived.
-
-<!-- SECTION 1: Flag are made with JavaScript using Wikipedia images -->
-<div id="grid_container"></div>
-
-<script>
-var outputElement = document.getElementById("grid_container");
-
-// Clear the output
-outputElement.innerHTML = '';
-
-// Data array
-const living_in_the_world = [
-  {flag: "https://upload.wikimedia.org/wikipedia/commons/0/01/Flag_of_California.svg", greeting: "Hey", description: "California - forever"},
-  {flag: "https://upload.wikimedia.org/wikipedia/commons/b/b9/Flag_of_Oregon.svg", greeting: "Hi", description: "Oregon - 9 years"},
-  {flag: "https://upload.wikimedia.org/wikipedia/commons/b/be/Flag_of_England.svg", greeting: "Alright mate", description: "England - 2 years"},
-  {flag: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Flag_of_Hawaii.svg", greeting: "Aloha", description: "Hawaii - 2 years"}
-];
-
-// Create grid container
-const container = document.createElement('div');
-container.id = 'grid_container';
-container.style.display = 'grid';
-container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
-container.style.gap = '10px';
-
-// Loop through each location
-for (const location of living_in_the_world) {
-  // Create grid item
-  const gridItem = document.createElement('div');
-  gridItem.style.textAlign = 'center';
-  
-  // Create and add flag image
-  const img = document.createElement('img');
-  img.src = location.flag;
-  img.alt = location.description + ' Flag';
-  img.style.width = '100%';
-  img.style.height = '100px';
-  img.style.objectFit = 'contain';
-  
-  // Create description
-  const description = document.createElement('p');
-  description.textContent = location.description;
-  description.style.margin = '5px 0';
-  description.style.fontWeight = 'bold';
-  
-  // Create greeting
-  const greeting = document.createElement('p');
-  greeting.textContent = location.greeting;
-  greeting.style.margin = '5px 0';
-  greeting.style.fontStyle = 'italic';
-  greeting.style.opacity = '0.7';
-  
-  // Add all elements to grid item
-  gridItem.appendChild(img);
-  gridItem.appendChild(description);
-  gridItem.appendChild(greeting);
-  
-  // Add grid item to container
-  container.appendChild(gridItem);
-}
-
-outputElement.appendChild(container);
-</script>
-
----
-
-<!-- SECTION 2: Journey descriptions are made with Markdown using emojis -->
-
-### Journey through Life
-
-Here is what I did at those places
-
-- 🏫 Lots of Elementary Schools in Tucson, LA, Honolulu, and Glendale (CA)
-- 🏫 Middle and High School in Glendale (CA), Hoover High graduated '77
-- 🎓 Glendale CA Community College, UCLA Extension, LA Wilshire Computer Tech School '77 to '79
-- ⛪ England, London Missionary for Church of Jesus Christ of Latter-day Saints '79 to '81
-- 💼 Culver City, Glendale CA founder at Ashton-Tate, original PC's dBase 2 and 3 '82 to '87
-- 🎓 Eugene Oregon Undergraduate CompSci Degree at University of Oregon (Go Ducks!) '89 to '91
-- 💼 Eugene Oregon, founder and owner @ Microniche `88, Point Control CAD CAM developer '91 to '96
-- 🏢 San Diego CA Qualcomm, Satellite Comm and 1st Mobile OS (BREW) '96 to '19
-- 👨‍🏫 San Diego CA Teacher of Computer Science @ Del Norte High School San Diego '19 to present
-
-### Culture, Family, and Fun
-
-Everything for me, as for many others, revolves around family and faith. Oh, to stay in context of this site ... don't forget I like code, code, coding.
-
-- My mother told me that I was Danish, English. and Irish, here is my researched [family tree]({{site.baseurl}}/images/about/familytree.png)
-- My family is pretty big as I have been married twice, my 1st wife passed away.  We have had 5 kids, 4 adopted by me, 1 biological.  Plus, there are three grandkids.  My name to my grandkids is Abuilito.
-- The gallery of pics has some of my family, fun, culture and faith memories.
-
----
-
-<!-- Section 3: Image Galley is made using Style and HTML and GitHub /images -->
-
-<style>
-    .image-gallery {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        gap: 10px;
-        }
-
-    .image-gallery img {
-        max-height: 150px;
-        object-fit: cover;
-        border-radius: 5px;
-    }
-</style>
-
-<!-- This grid_container class is used by CSS styling and the id is used by JavaScript connection -->
-<div class="grid-container" id="grid_container">
-    <!-- content will be added here by JavaScript -->
+<div class="sfi-page-header">
+  <div class="sfi-page-header-content">
+    <h1>About <span class="gold">SFI Foundation</span></h1>
+    <p>
+      A non-profit organization established in 1978 to issue and administer standards
+      for the quality assurance of specialty performance and racing equipment.
+    </p>
+  </div>
 </div>
 
-<div class="image-gallery">
-  <img src="{{site.baseurl}}/images/about/missionary.jpg" alt="Image 1">
-  <img src="{{site.baseurl}}/images/about/john_tamara.jpg" alt="Image 2">
-  <img src="{{site.baseurl}}/images/about/tamara_fam.jpg" alt="Image 3">
-  <img src="{{site.baseurl}}/images/about/surf.jpg" alt="Image 4">
-  <img src="{{site.baseurl}}/images/about/john_lora.jpg" alt="Image 5">
-  <img src="{{site.baseurl}}/images/about/lora_fam.jpg" alt="Image 6">
-  <img src="{{site.baseurl}}/images/about/lora_fam2.jpg" alt="Image 7">
-  <img src="{{site.baseurl}}/images/about/pj_party.jpg" alt="Image 8">
-  <img src="{{site.baseurl}}/images/about/trent_family.png" alt="Image 9">
-  <img src="{{site.baseurl}}/images/about/claire.jpg" alt="Image 10">
-  <img src="{{site.baseurl}}/images/about/grandkids.jpg" alt="Image 11">
-  <img src="{{site.baseurl}}/images/about/farm.jpg" alt="Image 12">
-</div>
+<section class="sfi-sect">
+  <div class="sfi-sect-label">Who We Are</div>
+  <div class="sfi-sect-title">Our Mission</div>
+  <div class="sfi-sect-desc">
+    The SFI Foundation, Inc. (SFI) is a non-profit organization that has served the automotive
+    aftermarket and the motorsports industry since 1978. Our service to the industry is a system
+    of developing and administering various standards, certifications, and testing criteria
+    for use in motorsports.
+  </div>
+
+  <div class="sfi-info-grid">
+    <div class="sfi-info-card">
+      <h3>What is SFI?</h3>
+      <p>
+        The SFI Foundation, Inc. is a non-profit organization established to issue and administer
+        standards for the quality assurance of specialty performance and racing equipment.
+        The letters originally stood for "SEMA Foundation, Inc." but SFI is now fully independent.
+      </p>
+      <p>
+        SFI has approximately 100 member sanctioning bodies and over 300 individual equipment
+        manufacturers participating in more than 85 specification programs.
+      </p>
+    </div>
+    <div class="sfi-info-card">
+      <h3>How It Works</h3>
+      <p>
+        Equipment manufacturers test and self-certify their products to SFI standards, which
+        are then included in race sanctioning organization rules. Participation is voluntary
+        once a standard is enacted.
+      </p>
+      <p>
+        Programs are funded by manufacturer licensing fees and donations. Enforcement uses
+        contractual and licensing agreements with inspection provisions.
+      </p>
+    </div>
+    <div class="sfi-info-card">
+      <h3>Who Uses SFI?</h3>
+      <p>
+        Equipment manufacturers are the primary users of SFI standards. These standards are
+        adopted by race sanctioning bodies into their rulebooks, making them requirements
+        for competitors.
+      </p>
+      <p>
+        Standards are initiated by the SFI Technical Committee, comprised of experts from
+        across the motorsports industry.
+      </p>
+    </div>
+    <div class="sfi-info-card">
+      <h3>Open Process</h3>
+      <p>
+        SFI's programs are open to all interested parties, use technical committees with
+        cross-sector expertise, follow due process procedures, and publish specifications
+        publicly for full transparency.
+      </p>
+      <p>
+        SFI monitors adherence through certified test reports, periodic spec reviews, and
+        licensing agreements.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="sfi-divider"><hr></div>
+
+<section class="sfi-sect">
+  <div class="sfi-cta-banner">
+    <h2>EXPLORE OUR SPECIFICATIONS</h2>
+    <p>Browse all SFI specifications or use our ML-powered search to find what you need.</p>
+    <a href="/sfi-specs/" class="sfi-btn sfi-btn-primary">Spec Search &rarr;</a>
+    <a href="/history/" class="sfi-btn sfi-btn-secondary">Our History</a>
+  </div>
+</section>

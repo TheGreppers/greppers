@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page.title }} | SFI Foundation</title>
+    <meta name="description" content="{{ page.description | default: 'SFI Foundation - Setting the Standard for Motorsports Safety Since 1978' }}">
+    <link rel="icon" href="{{ '/sfifoundation.com/wp-content/uploads/cropped-sfi-favicon-32x32.png' | relative_url }}" sizes="32x32">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% include sfi/styles.html %}
+  </head>
+  <body style="margin:0;padding:0;background:#060a14;color:#e6edf3;">
+    {% include sfi/nav.html %}
+    <main>
+      {{ content }}
+    </main>
+    {% include sfi/footer.html %}
+    <script>
+      // Mobile nav toggle
+      document.getElementById('navToggle').addEventListener('click', () => {
+        document.getElementById('navLinks').classList.toggle('open');
+      });
+      document.querySelectorAll('.sfi-nav-links a').forEach(a => {
+        a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+      });
+    </script>
+  </body>
+</html>
