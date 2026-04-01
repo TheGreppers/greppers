@@ -452,6 +452,25 @@ permalink: /sfi-specs/
 }
 @keyframes sfiSpin { to { transform: rotate(360deg); } }
 
+/* Fuzzy search hint */
+.sfi-fuzzy-hint {
+  display: none;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.15);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: var(--sfi-muted);
+}
+.sfi-fuzzy-hint.visible { display: block; }
+.sfi-fuzzy-hint strong {
+  color: var(--sfi-cyan);
+  cursor: pointer;
+}
+.sfi-fuzzy-hint strong:hover { text-decoration: underline; }
+
 /* Responsive */
 @media (max-width: 600px) {
   .specs-hero h1 { font-size: 2.2rem; }
@@ -519,6 +538,8 @@ permalink: /sfi-specs/
 
   <input type="text" class="sfi-search-box" id="sfiSearch"
          placeholder="Search specs... (e.g. helmet, 1.1, drag racing, clutch)">
+
+  <div id="sfiFuzzyHint" class="sfi-fuzzy-hint"></div>
 
   <div class="sfi-filter-row" id="sfiFilters">
     <button class="sfi-filter-btn active" data-category="all">All</button>
@@ -707,6 +728,105 @@ async function classifyPart() {
   }
 }
 
+// ═══════════════ FUZZY SEARCH ENGINE ═══════════════
+
+// Levenshtein distance between two strings
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (!m) return n;
+  if (!n) return m;
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  let curr = new Array(n + 1);
+  for (let i = 1; i <= m; i++) {
+    curr[0] = i;
+    for (let j = 1; j <= n; j++) {
+      curr[j] = a[i - 1] === b[j - 1]
+        ? prev[j - 1]
+        : 1 + Math.min(prev[j - 1], prev[j], curr[j - 1]);
+    }
+    [prev, curr] = [curr, prev];
+  }
+  return prev[n];
+}
+
+// Score how well a query word matches a target word (0 = no match, 1 = perfect)
+function wordScore(query, target) {
+  if (target.includes(query)) return 1;
+  if (query.length <= 1) return 0;
+  // Prefix match bonus
+  if (target.startsWith(query.slice(0, Math.max(2, query.length - 1)))) return 0.85;
+  const dist = levenshtein(query, target);
+  const maxLen = Math.max(query.length, target.length);
+  const similarity = 1 - dist / maxLen;
+  // Allow up to ~30% character errors
+  return similarity >= 0.65 ? similarity : 0;
+}
+
+// Score how well a query matches a spec's searchable text
+function fuzzyMatch(query, spec) {
+  const hay = `${spec.product_name} ${spec.spec_number} ${spec.category} ${spec.subcategory || ''}`.toLowerCase();
+  const hayWords = hay.split(/[\s,\-\/&()]+/).filter(Boolean);
+  const qWords = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!qWords.length) return 1; // empty query matches all
+
+  let totalScore = 0;
+  for (const qw of qWords) {
+    // Exact substring match in full haystack
+    if (hay.includes(qw)) { totalScore += 1; continue; }
+    // Best fuzzy word match
+    let best = 0;
+    for (const hw of hayWords) {
+      const s = wordScore(qw, hw);
+      if (s > best) best = s;
+    }
+    totalScore += best;
+  }
+  return totalScore / qWords.length;
+}
+
+// Build a vocabulary of known words from specs for "did you mean" suggestions
+let knownWords = [];
+function buildVocabulary() {
+  const wordSet = new Set();
+  specs.forEach(s => {
+    `${s.product_name} ${s.category} ${s.subcategory || ''}`
+      .toLowerCase()
+      .split(/[\s,\-\/&()]+/)
+      .filter(w => w.length > 2)
+      .forEach(w => wordSet.add(w));
+  });
+  knownWords = [...wordSet];
+}
+
+// Find the best correction for a query word
+function correctWord(word) {
+  if (word.length <= 2) return null;
+  let bestWord = null, bestDist = Infinity;
+  for (const kw of knownWords) {
+    if (kw.includes(word) || word.includes(kw)) return null; // already matches
+    const d = levenshtein(word, kw);
+    const threshold = word.length <= 4 ? 1 : Math.ceil(word.length * 0.35);
+    if (d <= threshold && d < bestDist) {
+      bestDist = d;
+      bestWord = kw;
+    }
+  }
+  return bestWord;
+}
+
+// Build a "did you mean" suggestion from the query
+function getSuggestion(query) {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return null;
+  let changed = false;
+  const corrected = words.map(w => {
+    const fix = correctWord(w);
+    if (fix && fix !== w) { changed = true; return fix; }
+    return w;
+  });
+  return changed ? corrected.join(' ') : null;
+}
+
 // ═══════════════ SPEC SEARCH ═══════════════
 let specs = [];
 let activeCategory = 'all';
@@ -715,9 +835,9 @@ async function loadSpecs() {
   try {
     const res = await fetch(`${API}/specs`);
     specs = await res.json();
+    buildVocabulary();
     buildFilters();
     buildCategoryGrid();
-    // Check for category from landing page
     const savedCat = localStorage.getItem('sfiCat');
     if (savedCat) {
       localStorage.removeItem('sfiCat');
@@ -766,33 +886,61 @@ function filterByCategory(cat) {
 }
 
 function renderSearch() {
-  const q = document.getElementById('sfiSearch').value.toLowerCase().trim();
+  const q = document.getElementById('sfiSearch').value.trim();
   const tbody = document.getElementById('sfiBody');
   const noRes = document.getElementById('sfiNoResults');
   const countEl = document.getElementById('sfiCount');
-  const filtered = specs.filter(s => {
-    if (activeCategory !== 'all' && s.category !== activeCategory) return false;
-    if (q) {
-      const hay = `${s.product_name} ${s.spec_number} ${s.category} ${s.subcategory}`.toLowerCase();
-      return hay.includes(q);
-    }
-    return true;
-  });
-  countEl.textContent = `Showing ${filtered.length} of ${specs.length} specs`;
-  if (!filtered.length) { tbody.innerHTML = ''; noRes.style.display = 'block'; return; }
+  const hintEl = document.getElementById('sfiFuzzyHint');
+
+  // Category filter first
+  let pool = activeCategory === 'all' ? specs : specs.filter(s => s.category === activeCategory);
+
+  if (!q) {
+    // No query — show all in category
+    hintEl.className = 'sfi-fuzzy-hint';
+    countEl.textContent = `Showing ${pool.length} of ${specs.length} specs`;
+    if (!pool.length) { tbody.innerHTML = ''; noRes.style.display = 'block'; return; }
+    noRes.style.display = 'none';
+    tbody.innerHTML = pool.map(s => specRow(s)).join('');
+    return;
+  }
+
+  // Score and sort by fuzzy relevance
+  const scored = pool.map(s => ({ spec: s, score: fuzzyMatch(q, s) }))
+    .filter(x => x.score >= 0.55)
+    .sort((a, b) => b.score - a.score);
+
+  // "Did you mean?" suggestion
+  const suggestion = getSuggestion(q);
+  if (suggestion && scored.length < 5) {
+    hintEl.innerHTML = `Did you mean: <strong onclick="applySuggestion('${suggestion.replace(/'/g, "\\'")}')">${suggestion}</strong>?`;
+    hintEl.className = 'sfi-fuzzy-hint visible';
+  } else {
+    hintEl.className = 'sfi-fuzzy-hint';
+  }
+
+  countEl.textContent = `Showing ${scored.length} of ${specs.length} specs`;
+  if (!scored.length) { tbody.innerHTML = ''; noRes.style.display = 'block'; return; }
   noRes.style.display = 'none';
-  tbody.innerHTML = filtered.map(s => {
-    const pdfs = [];
-    if (s.spec_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.spec_pdf}" target="_blank">Spec</a>`);
-    if (s.manufacturer_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.manufacturer_pdf}" target="_blank">Mfrs</a>`);
-    return `<tr>
-      <td class="sfi-spec-num">SFI ${s.spec_number}</td>
-      <td>${s.product_name}</td>
-      <td><span class="sfi-cat-badge">${s.category}</span></td>
-      <td>${s.effective_date || '\u2014'}</td>
-      <td>${pdfs.join(' \u2022 ') || '\u2014'}</td>
-    </tr>`;
-  }).join('');
+  tbody.innerHTML = scored.map(x => specRow(x.spec)).join('');
+}
+
+function applySuggestion(text) {
+  document.getElementById('sfiSearch').value = text;
+  renderSearch();
+}
+
+function specRow(s) {
+  const pdfs = [];
+  if (s.spec_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.spec_pdf}" target="_blank">Spec</a>`);
+  if (s.manufacturer_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.manufacturer_pdf}" target="_blank">Mfrs</a>`);
+  return `<tr>
+    <td class="sfi-spec-num">SFI ${s.spec_number}</td>
+    <td>${s.product_name}</td>
+    <td><span class="sfi-cat-badge">${s.category}</span></td>
+    <td>${s.effective_date || '\u2014'}</td>
+    <td>${pdfs.join(' \u2022 ') || '\u2014'}</td>
+  </tr>`;
 }
 
 document.getElementById('sfiSearch').addEventListener('input', renderSearch);
