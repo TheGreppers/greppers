@@ -5,9 +5,9 @@ Organization: "SFI Foundation"
 Description: "SFI certifies the safety gear that protects motorsports drivers worldwide — but outdated tools force inspectors to dig through static pages and staff to update HTML by hand. We're rebuilding their digital experience so the people keeping racers safe can do their jobs faster."
 
 Features:
-  - "Instant Spec Search — ML-powered lookup replaces 8 static pages so inspectors find what they need in seconds"
-  - "Visual Part Detector — snap a photo of a car part to identify its SFI spec and certification status using image recognition"
+  - "Unified Spec Search — fuzzy matching + TF-IDF scoring so typing 'fire suit' finds SFI 3.2A/5 instantly across all specs"
   - "Admin Spec Manager — staff update specifications through a simple dashboard instead of editing raw HTML"
+  - "AI powered visual spec search to instantly look up manafacturing details"
   - "Mobile-First Redesign — accessible, responsive site that actually works on pit-lane devices"
 
 Tech:

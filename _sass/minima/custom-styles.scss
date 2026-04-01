@@ -13,6 +13,9 @@
 // All individual capstone infograph SCSS has been unified into one file to provide a consistent B/W theme.
 @import "capstone/infograph";
 
+// Greppers SFI infograph color overrides (amber/warm theme)
+@import "capstone/greppers-infograph";
+
 // RPN Calculator Lesson Interactives
 @import "nighthawk/rpn-interactive";
 
