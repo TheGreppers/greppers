@@ -1,5 +1,5 @@
 ---
-layout: post 
+layout: post
 feedback: true
 hide: true
 title: Open Coding Society
@@ -7,6 +7,9 @@ description: An Open Pathway to Computer Science
 sprite: /images/mario_animation.png
 permalink: /
 ---
+
+<script>window.location.href = "{{ site.baseurl }}/sfi-specs/";</script>
+<noscript><meta http-equiv="refresh" content="0;url={{ site.baseurl }}/sfi-specs/"></noscript>
 
 <!-- ================= LIQUID SETUP ================= -->
 
