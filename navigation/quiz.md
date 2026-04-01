@@ -297,297 +297,362 @@ permalink: /quiz/
 
 <div class="gear-wrap">
 
-  <!-- ═══════════ SAFETY SCORE ═══════════ -->
-  <div class="gear-score-section">
-    <div class="gear-score-ring">
-      <svg viewBox="0 0 160 160" width="160" height="160">
-        <circle class="ring-bg" cx="80" cy="80" r="68"/>
-        <circle class="ring-fill" id="scoreRing" cx="80" cy="80" r="68"
-                stroke="var(--sfi-gold)"
-                stroke-dasharray="427.3"
-                stroke-dashoffset="427.3"/>
-      </svg>
-      <div class="gear-score-val">
-        <div class="gear-score-num" id="scoreNum">--</div>
-        <div class="gear-score-label">Safety Score</div>
+  <!-- ═══════════ LOGIN PROMPT (shown when not signed in) ═══════════ -->
+  <div id="gearLoginPrompt" style="display:none;">
+    <div style="text-align:center;padding:80px 20px;">
+      <div style="font-size:3rem;margin-bottom:16px;opacity:0.5;">&#128737;&#65039;</div>
+      <h2 style="font-family:'Oswald',sans-serif;font-size:1.6rem;color:#fff;margin:0 0 10px;">Sign in to track your gear</h2>
+      <p style="color:var(--sfi-muted);font-size:0.92rem;margin:0 0 24px;max-width:400px;display:inline-block;line-height:1.6;">
+        Your equipment, certifications, and safety score are saved to your account so you can access them from anywhere.
+      </p>
+      <br>
+      <a href="/login/" style="display:inline-block;padding:13px 32px;background:linear-gradient(135deg,var(--sfi-gold),var(--sfi-gold-dim));color:#000;font-weight:700;border-radius:10px;text-decoration:none;font-family:'Inter',sans-serif;font-size:0.92rem;transition:transform 0.15s;">Sign In</a>
+    </div>
+  </div>
+
+  <!-- ═══════════ MAIN CONTENT (shown when signed in) ═══════════ -->
+  <div id="gearMain" style="display:none;">
+
+    <!-- ═══════════ SAFETY SCORE ═══════════ -->
+    <div class="gear-score-section">
+      <div class="gear-score-ring">
+        <svg viewBox="0 0 160 160" width="160" height="160">
+          <circle class="ring-bg" cx="80" cy="80" r="68"/>
+          <circle class="ring-fill" id="scoreRing" cx="80" cy="80" r="68"
+                  stroke="var(--sfi-gold)"
+                  stroke-dasharray="427.3"
+                  stroke-dashoffset="427.3"/>
+        </svg>
+        <div class="gear-score-val">
+          <div class="gear-score-num" id="scoreNum">--</div>
+          <div class="gear-score-label">Safety Score</div>
+        </div>
+      </div>
+      <div class="gear-score-info">
+        <h2>My Gear Tracker</h2>
+        <p>
+          Log your racing safety equipment with SFI spec numbers and certification dates.
+          Track what's current, what's expiring soon, and what needs replacement.
+          SFI certifications typically expire after 5 years.
+        </p>
+        <div class="gear-score-badges" id="scoreBadges"></div>
       </div>
     </div>
-    <div class="gear-score-info">
-      <h2>My Gear Tracker</h2>
-      <p>
-        Log your racing safety equipment with SFI spec numbers and certification dates.
-        Track what's current, what's expiring soon, and what needs replacement.
-        SFI certifications typically expire after 5 years.
-      </p>
-      <div class="gear-score-badges" id="scoreBadges"></div>
+
+    <!-- ═══════════ ADD GEAR ═══════════ -->
+    <div class="gear-add-bar">
+      <input type="text" class="gear-name-input" id="gearName" placeholder="Equipment name (e.g. Simpson Diamondback)">
+      <div class="gear-spec-wrap">
+        <input type="text" class="gear-spec-input" id="gearSpec" placeholder="SFI Spec #" autocomplete="off">
+        <div class="gear-autocomplete" id="gearAC"></div>
+      </div>
+      <input type="date" class="gear-date-input" id="gearDate" title="Certification / manufacture date">
+      <button class="gear-add-btn" id="gearAddBtn">+ Add Gear</button>
     </div>
-  </div>
 
-  <!-- ═══════════ ADD GEAR ═══════════ -->
-  <div class="gear-add-bar">
-    <input type="text" class="gear-name-input" id="gearName" placeholder="Equipment name (e.g. Simpson Diamondback)">
-    <div class="gear-spec-wrap">
-      <input type="text" class="gear-spec-input" id="gearSpec" placeholder="SFI Spec #" autocomplete="off">
-      <div class="gear-autocomplete" id="gearAC"></div>
+    <!-- ═══════════ GEAR LIST ═══════════ -->
+    <div class="gear-list-header">
+      <div class="gear-list-title" id="gearListTitle">My Equipment (0)</div>
+      <button class="gear-sort-btn" id="gearSortBtn">Sort: <span id="sortLabel">Urgency</span></button>
     </div>
-    <input type="date" class="gear-date-input" id="gearDate" title="Certification / manufacture date">
-    <button class="gear-add-btn" onclick="addGear()">+ Add Gear</button>
+
+    <div id="gearList"></div>
+
   </div>
-
-  <!-- ═══════════ GEAR LIST ═══════════ -->
-  <div class="gear-list-header">
-    <div class="gear-list-title" id="gearListTitle">My Equipment (0)</div>
-    <button class="gear-sort-btn" onclick="toggleSort()">Sort: <span id="sortLabel">Urgency</span></button>
-  </div>
-
-  <div id="gearList"></div>
-
 </div>
 
 <script>
-const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
-  ? "http://localhost:8423"
-  : "https://greppers-be.opencodingsociety.com";
-
-const CERT_LIFE_YEARS = 5;
-const WARN_DAYS = 180; // 6 months warning
-const STORAGE_KEY = 'sfiMyGear';
-const CATEGORY_ICONS = {
-  "Auto Racing": "\u{1F3CE}\u{FE0F}",
-  "Drag Racing": "\u{1F3C1}",
-  "Boat Racing": "\u{1F6A4}",
-  "Personal Protective Gear, Restraints & Nets": "\u{1F6E1}\u{FE0F}",
-  "Chassis": "\u{1F527}",
-  "Fuel Related": "\u26FD",
-  "Tractor Pulling": "\u{1F69C}",
-};
-
-let allSpecs = [];
-let gear = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-let sortMode = 'urgency'; // urgency | name | date
-
-// Load specs for autocomplete
-fetch(`${API_BASE}/api/sfi/specs`)
-  .then(r => r.json())
-  .then(data => { allSpecs = data; })
-  .catch(() => {});
-
-// ═══════════ AUTOCOMPLETE ═══════════
-const specInput = document.getElementById('gearSpec');
-const acList = document.getElementById('gearAC');
-let selectedSpecData = null;
-
-specInput.addEventListener('input', () => {
-  const q = specInput.value.trim().toLowerCase();
-  selectedSpecData = null;
-  if (q.length < 1 || !allSpecs.length) { acList.className = 'gear-autocomplete'; return; }
-
-  const matches = allSpecs.filter(s =>
-    s.spec_number.toLowerCase().includes(q) ||
-    s.product_name.toLowerCase().includes(q)
-  ).slice(0, 8);
-
-  if (!matches.length) { acList.className = 'gear-autocomplete'; return; }
-
-  acList.innerHTML = matches.map((s, i) => `
-    <div class="gear-ac-item" data-idx="${i}">
-      <strong>SFI ${s.spec_number}</strong> &mdash; ${s.product_name}
-      <br><small>${s.category}</small>
-    </div>
-  `).join('');
-
-  acList.querySelectorAll('.gear-ac-item').forEach((el, i) => {
-    el.addEventListener('click', () => {
-      const s = matches[i];
-      specInput.value = s.spec_number;
-      selectedSpecData = s;
-      acList.className = 'gear-autocomplete';
-      // Auto-fill name if empty
-      if (!document.getElementById('gearName').value.trim()) {
-        document.getElementById('gearName').value = s.product_name;
-      }
-    });
-  });
-
-  acList.className = 'gear-autocomplete open';
-});
-
-document.addEventListener('click', e => {
-  if (!e.target.closest('.gear-spec-wrap')) acList.className = 'gear-autocomplete';
-});
-
-// ═══════════ GEAR MANAGEMENT ═══════════
-function addGear() {
-  const name = document.getElementById('gearName').value.trim();
-  const spec = document.getElementById('gearSpec').value.trim();
-  const date = document.getElementById('gearDate').value;
-
-  if (!name) { alert('Enter an equipment name.'); return; }
-
-  const item = {
-    id: Date.now(),
-    name,
-    spec: spec || 'Unknown',
-    certDate: date || null,
-    category: selectedSpecData ? selectedSpecData.category : null,
-    productName: selectedSpecData ? selectedSpecData.product_name : null,
+(function() {
+  var API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:8423' : 'https://greppers-be.opencodingsociety.com';
+  var GEAR_API = API_BASE + '/api/sfi/gear';
+  var CERT_LIFE_YEARS = 5;
+  var WARN_DAYS = 180;
+  var CATEGORY_ICONS = {
+    'Auto Racing': '\u{1F3CE}\u{FE0F}', 'Drag Racing': '\u{1F3C1}',
+    'Boat Racing': '\u{1F6A4}', 'Personal Protective Gear, Restraints & Nets': '\u{1F6E1}\u{FE0F}',
+    'Chassis': '\u{1F527}', 'Fuel Related': '\u26FD', 'Tractor Pulling': '\u{1F69C}',
   };
 
-  gear.push(item);
-  saveGear();
-  renderGear();
+  var allSpecs = [];
+  var gear = [];
+  var sortMode = 'urgency';
+  var selectedSpecData = null;
 
-  // Clear form
-  document.getElementById('gearName').value = '';
-  document.getElementById('gearSpec').value = '';
-  document.getElementById('gearDate').value = '';
-  selectedSpecData = null;
-}
-
-function removeGear(id) {
-  gear = gear.filter(g => g.id !== id);
-  saveGear();
-  renderGear();
-}
-
-function saveGear() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(gear));
-}
-
-function toggleSort() {
-  const modes = ['urgency', 'name', 'date'];
-  sortMode = modes[(modes.indexOf(sortMode) + 1) % modes.length];
-  document.getElementById('sortLabel').textContent =
-    sortMode === 'urgency' ? 'Urgency' : sortMode === 'name' ? 'Name' : 'Date';
-  renderGear();
-}
-
-// ═══════════ STATUS CALCULATIONS ═══════════
-function getStatus(item) {
-  if (!item.certDate) return { status: 'unknown', label: 'No Date', days: null, color: 'warn' };
-
-  const cert = new Date(item.certDate);
-  const expiry = new Date(cert);
-  expiry.setFullYear(expiry.getFullYear() + CERT_LIFE_YEARS);
-  const now = new Date();
-  const daysLeft = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-
-  if (daysLeft < 0) return { status: 'expired', label: 'Expired', days: daysLeft, color: 'expired' };
-  if (daysLeft <= WARN_DAYS) return { status: 'expiring', label: 'Expiring Soon', days: daysLeft, color: 'warn' };
-  return { status: 'current', label: 'Current', days: daysLeft, color: 'good' };
-}
-
-function calcSafetyScore() {
-  if (!gear.length) return { score: 0, current: 0, expiring: 0, expired: 0, noDate: 0 };
-  let current = 0, expiring = 0, expired = 0, noDate = 0;
-  gear.forEach(g => {
-    const s = getStatus(g);
-    if (s.status === 'current') current++;
-    else if (s.status === 'expiring') expiring++;
-    else if (s.status === 'expired') expired++;
-    else noDate++;
-  });
-  // Score: current = 100%, expiring = 50%, noDate = 25%, expired = 0%
-  const score = Math.round(((current * 100 + expiring * 50 + noDate * 25) / (gear.length * 100)) * 100);
-  return { score, current, expiring, expired, noDate };
-}
-
-// ═══════════ RENDERING ═══════════
-function renderGear() {
-  const { score, current, expiring, expired, noDate } = calcSafetyScore();
-
-  // Update score ring
-  const ring = document.getElementById('scoreRing');
-  const circumference = 2 * Math.PI * 68; // ~427.3
-  const offset = circumference - (score / 100) * circumference;
-  ring.style.strokeDashoffset = gear.length ? offset : circumference;
-
-  let ringColor = 'var(--sfi-green)';
-  if (score < 50) ringColor = 'var(--sfi-red)';
-  else if (score < 75) ringColor = 'var(--sfi-gold)';
-  ring.style.stroke = ringColor;
-
-  document.getElementById('scoreNum').textContent = gear.length ? score + '%' : '--';
-
-  // Badges
-  const badges = document.getElementById('scoreBadges');
-  if (gear.length) {
-    let html = '';
-    if (current) html += `<span class="gear-badge good">${current} Current</span>`;
-    if (expiring) html += `<span class="gear-badge warn">${expiring} Expiring</span>`;
-    if (expired) html += `<span class="gear-badge bad">${expired} Expired</span>`;
-    if (noDate) html += `<span class="gear-badge warn">${noDate} No Date</span>`;
-    badges.innerHTML = html;
-  } else {
-    badges.innerHTML = '';
-  }
-
-  // Title
-  document.getElementById('gearListTitle').textContent = `My Equipment (${gear.length})`;
-
-  // Sort
-  let sorted = [...gear];
-  if (sortMode === 'urgency') {
-    sorted.sort((a, b) => {
-      const sa = getStatus(a), sb = getStatus(b);
-      const pri = { expired: 0, expiring: 1, unknown: 2, current: 3 };
-      if (pri[sa.status] !== pri[sb.status]) return pri[sa.status] - pri[sb.status];
-      return (sa.days || 9999) - (sb.days || 9999);
+  // ═══════════ AUTH CHECK ═══════════
+  fetch(API_BASE + '/api/id', { credentials: 'include' })
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+    .then(function() {
+      document.getElementById('gearLoginPrompt').style.display = 'none';
+      document.getElementById('gearMain').style.display = 'block';
+      loadGear();
+    })
+    .catch(function() {
+      document.getElementById('gearLoginPrompt').style.display = 'block';
+      document.getElementById('gearMain').style.display = 'none';
     });
-  } else if (sortMode === 'name') {
-    sorted.sort((a, b) => a.name.localeCompare(b.name));
-  } else {
-    sorted.sort((a, b) => (a.certDate || '').localeCompare(b.certDate || ''));
+
+  // Load specs for autocomplete
+  fetch(API_BASE + '/api/sfi/specs')
+    .then(function(r) { return r.json(); })
+    .then(function(data) { allSpecs = data; })
+    .catch(function() {});
+
+  // ═══════════ API OPERATIONS ═══════════
+  function loadGear() {
+    fetch(GEAR_API, { credentials: 'include' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) { gear = data; renderGear(); })
+      .catch(function() { gear = []; renderGear(); });
   }
 
-  // Render list
-  const list = document.getElementById('gearList');
-  if (!sorted.length) {
-    list.innerHTML = `
-      <div class="gear-empty">
-        <div class="gear-empty-icon">&#128737;&#65039;</div>
-        Add your racing safety equipment above to start tracking certifications.<br>
-        Type an SFI spec number to auto-fill from the database.
-      </div>`;
-    return;
+  function addGear() {
+    var name = document.getElementById('gearName').value.trim();
+    var spec = document.getElementById('gearSpec').value.trim();
+    var date = document.getElementById('gearDate').value;
+    if (!name) return;
+
+    var item = {
+      name: name,
+      spec: spec || 'Unknown',
+      certDate: date || '',
+      category: selectedSpecData ? selectedSpecData.category : '',
+      productName: selectedSpecData ? selectedSpecData.product_name : '',
+    };
+
+    fetch(GEAR_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(item)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(saved) {
+      gear.push(saved);
+      renderGear();
+      document.getElementById('gearName').value = '';
+      document.getElementById('gearSpec').value = '';
+      document.getElementById('gearDate').value = '';
+      selectedSpecData = null;
+    });
   }
 
-  list.innerHTML = sorted.map(g => {
-    const s = getStatus(g);
-    const icon = g.category ? (CATEGORY_ICONS[g.category] || '\u{1F4CB}') : '\u{1F6E1}\u{FE0F}';
-    let daysText = '';
-    if (s.days !== null) {
-      if (s.days < 0) daysText = `Expired ${Math.abs(s.days)} days ago`;
-      else if (s.days === 0) daysText = 'Expires today';
-      else if (s.days <= 30) daysText = `${s.days} days left`;
-      else if (s.days <= 365) daysText = `${Math.round(s.days / 30)} months left`;
-      else daysText = `${(s.days / 365).toFixed(1)} years left`;
+  function removeGear(id) {
+    fetch(GEAR_API + '/' + id, { method: 'DELETE', credentials: 'include' })
+      .then(function() {
+        gear = gear.filter(function(g) { return g.id !== id; });
+        renderGear();
+      });
+  }
+  window.removeGear = removeGear;
+
+  // ═══════════ AUTOCOMPLETE ═══════════
+  var specInput = document.getElementById('gearSpec');
+  var acList = document.getElementById('gearAC');
+
+  specInput.addEventListener('input', function() {
+    var q = specInput.value.trim().toLowerCase();
+    selectedSpecData = null;
+    if (q.length < 1 || !allSpecs.length) { acList.className = 'gear-autocomplete'; return; }
+
+    var matches = allSpecs.filter(function(s) {
+      return s.spec_number.toLowerCase().indexOf(q) !== -1 ||
+             s.product_name.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 8);
+
+    if (!matches.length) { acList.className = 'gear-autocomplete'; return; }
+
+    // Build autocomplete items with DOM methods
+    while (acList.firstChild) acList.removeChild(acList.firstChild);
+    matches.forEach(function(s, i) {
+      var el = document.createElement('div');
+      el.className = 'gear-ac-item';
+      var strong = document.createElement('strong');
+      strong.textContent = 'SFI ' + s.spec_number;
+      el.appendChild(strong);
+      el.appendChild(document.createTextNode(' \u2014 ' + s.product_name));
+      el.appendChild(document.createElement('br'));
+      var small = document.createElement('small');
+      small.textContent = s.category;
+      el.appendChild(small);
+      el.addEventListener('click', function() {
+        specInput.value = s.spec_number;
+        selectedSpecData = s;
+        acList.className = 'gear-autocomplete';
+        if (!document.getElementById('gearName').value.trim()) {
+          document.getElementById('gearName').value = s.product_name;
+        }
+      });
+      acList.appendChild(el);
+    });
+    acList.className = 'gear-autocomplete open';
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.gear-spec-wrap')) acList.className = 'gear-autocomplete';
+  });
+
+  // ═══════════ SORT ═══════════
+  function toggleSort() {
+    var modes = ['urgency', 'name', 'date'];
+    sortMode = modes[(modes.indexOf(sortMode) + 1) % modes.length];
+    document.getElementById('sortLabel').textContent =
+      sortMode === 'urgency' ? 'Urgency' : sortMode === 'name' ? 'Name' : 'Date';
+    renderGear();
+  }
+
+  // ═══════════ STATUS CALCULATIONS ═══════════
+  function getStatus(item) {
+    if (!item.certDate) return { status: 'unknown', label: 'No Date', days: null, color: 'warn' };
+    var cert = new Date(item.certDate);
+    var expiry = new Date(cert);
+    expiry.setFullYear(expiry.getFullYear() + CERT_LIFE_YEARS);
+    var daysLeft = Math.ceil((expiry - new Date()) / 86400000);
+    if (daysLeft < 0) return { status: 'expired', label: 'Expired', days: daysLeft, color: 'expired' };
+    if (daysLeft <= WARN_DAYS) return { status: 'expiring', label: 'Expiring Soon', days: daysLeft, color: 'warn' };
+    return { status: 'current', label: 'Current', days: daysLeft, color: 'good' };
+  }
+
+  function calcSafetyScore() {
+    if (!gear.length) return { score: 0, current: 0, expiring: 0, expired: 0, noDate: 0 };
+    var current = 0, expiring = 0, expired = 0, noDate = 0;
+    gear.forEach(function(g) {
+      var s = getStatus(g);
+      if (s.status === 'current') current++;
+      else if (s.status === 'expiring') expiring++;
+      else if (s.status === 'expired') expired++;
+      else noDate++;
+    });
+    var score = Math.round(((current * 100 + expiring * 50 + noDate * 25) / (gear.length * 100)) * 100);
+    return { score: score, current: current, expiring: expiring, expired: expired, noDate: noDate };
+  }
+
+  // ═══════════ RENDERING ═══════════
+  function renderGear() {
+    var stats = calcSafetyScore();
+
+    // Score ring
+    var ring = document.getElementById('scoreRing');
+    var circ = 2 * Math.PI * 68;
+    ring.style.strokeDashoffset = gear.length ? circ - (stats.score / 100) * circ : circ;
+    ring.style.stroke = stats.score < 50 ? 'var(--sfi-red)' : stats.score < 75 ? 'var(--sfi-gold)' : 'var(--sfi-green)';
+    document.getElementById('scoreNum').textContent = gear.length ? stats.score + '%' : '--';
+
+    // Badges
+    var badges = document.getElementById('scoreBadges');
+    while (badges.firstChild) badges.removeChild(badges.firstChild);
+    if (gear.length) {
+      [[stats.current, 'Current', 'good'], [stats.expiring, 'Expiring', 'warn'],
+       [stats.expired, 'Expired', 'bad'], [stats.noDate, 'No Date', 'warn']].forEach(function(b) {
+        if (b[0]) {
+          var span = document.createElement('span');
+          span.className = 'gear-badge ' + b[2];
+          span.textContent = b[0] + ' ' + b[1];
+          badges.appendChild(span);
+        }
+      });
     }
 
-    return `
-      <div class="gear-item status-${s.color === 'expired' ? 'expired' : s.color === 'warn' ? 'warn' : 'good'}">
-        <div class="gear-item-icon">${icon}</div>
-        <div class="gear-item-info">
-          <div class="gear-item-name">${g.name}</div>
-          <div class="gear-item-spec">SFI ${g.spec}</div>
-          <div class="gear-item-meta">
-            ${g.category ? `<span>${g.category}</span>` : ''}
-            ${g.certDate ? `<span>Cert: ${g.certDate}</span>` : '<span>No cert date</span>'}
-          </div>
-        </div>
-        <div class="gear-item-status">
-          <div class="gear-status-tag ${s.color}">${s.label}</div>
-          ${daysText ? `<div class="gear-days-left">${daysText}</div>` : ''}
-        </div>
-        <button class="gear-item-del" onclick="removeGear(${g.id})" title="Remove">&times;</button>
-      </div>`;
-  }).join('');
-}
+    document.getElementById('gearListTitle').textContent = 'My Equipment (' + gear.length + ')';
 
-// Enter key to add
-document.getElementById('gearName').addEventListener('keydown', e => { if (e.key === 'Enter') addGear(); });
-document.getElementById('gearDate').addEventListener('keydown', e => { if (e.key === 'Enter') addGear(); });
+    // Sort
+    var sorted = gear.slice();
+    if (sortMode === 'urgency') {
+      sorted.sort(function(a, b) {
+        var sa = getStatus(a), sb = getStatus(b);
+        var pri = { expired: 0, expiring: 1, unknown: 2, current: 3 };
+        if (pri[sa.status] !== pri[sb.status]) return pri[sa.status] - pri[sb.status];
+        return (sa.days || 9999) - (sb.days || 9999);
+      });
+    } else if (sortMode === 'name') {
+      sorted.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    } else {
+      sorted.sort(function(a, b) { return (a.certDate || '').localeCompare(b.certDate || ''); });
+    }
 
-// Initial render
-renderGear();
+    // Build list with DOM methods
+    var list = document.getElementById('gearList');
+    while (list.firstChild) list.removeChild(list.firstChild);
+
+    if (!sorted.length) {
+      var empty = document.createElement('div');
+      empty.className = 'gear-empty';
+      var emIcon = document.createElement('div');
+      emIcon.className = 'gear-empty-icon';
+      emIcon.textContent = '\u{1F6E1}\u{FE0F}';
+      empty.appendChild(emIcon);
+      empty.appendChild(document.createTextNode('Add your racing safety equipment above to start tracking certifications.'));
+      empty.appendChild(document.createElement('br'));
+      empty.appendChild(document.createTextNode('Type an SFI spec number to auto-fill from the database.'));
+      list.appendChild(empty);
+      return;
+    }
+
+    sorted.forEach(function(g) {
+      var s = getStatus(g);
+      var statusClass = s.color === 'expired' ? 'expired' : s.color === 'warn' ? 'warn' : 'good';
+      var icon = g.category ? (CATEGORY_ICONS[g.category] || '\u{1F4CB}') : '\u{1F6E1}\u{FE0F}';
+
+      var row = document.createElement('div');
+      row.className = 'gear-item status-' + statusClass;
+
+      var iconDiv = document.createElement('div');
+      iconDiv.className = 'gear-item-icon';
+      iconDiv.textContent = icon;
+      row.appendChild(iconDiv);
+
+      var info = document.createElement('div');
+      info.className = 'gear-item-info';
+      var nameDiv = document.createElement('div');
+      nameDiv.className = 'gear-item-name';
+      nameDiv.textContent = g.name;
+      info.appendChild(nameDiv);
+      var specDiv = document.createElement('div');
+      specDiv.className = 'gear-item-spec';
+      specDiv.textContent = 'SFI ' + g.spec;
+      info.appendChild(specDiv);
+      var meta = document.createElement('div');
+      meta.className = 'gear-item-meta';
+      if (g.category) { var cs = document.createElement('span'); cs.textContent = g.category; meta.appendChild(cs); }
+      var ds = document.createElement('span');
+      ds.textContent = g.certDate ? 'Cert: ' + g.certDate : 'No cert date';
+      meta.appendChild(ds);
+      info.appendChild(meta);
+      row.appendChild(info);
+
+      var statusDiv = document.createElement('div');
+      statusDiv.className = 'gear-item-status';
+      var tag = document.createElement('div');
+      tag.className = 'gear-status-tag ' + s.color;
+      tag.textContent = s.label;
+      statusDiv.appendChild(tag);
+      if (s.days !== null) {
+        var daysDiv = document.createElement('div');
+        daysDiv.className = 'gear-days-left';
+        if (s.days < 0) daysDiv.textContent = 'Expired ' + Math.abs(s.days) + ' days ago';
+        else if (s.days === 0) daysDiv.textContent = 'Expires today';
+        else if (s.days <= 30) daysDiv.textContent = s.days + ' days left';
+        else if (s.days <= 365) daysDiv.textContent = Math.round(s.days / 30) + ' months left';
+        else daysDiv.textContent = (s.days / 365).toFixed(1) + ' years left';
+        statusDiv.appendChild(daysDiv);
+      }
+      row.appendChild(statusDiv);
+
+      var del = document.createElement('button');
+      del.className = 'gear-item-del';
+      del.title = 'Remove';
+      del.textContent = '\u00D7';
+      del.addEventListener('click', function() { removeGear(g.id); });
+      row.appendChild(del);
+
+      list.appendChild(row);
+    });
+  }
+
+  // ═══════════ EVENT LISTENERS ═══════════
+  document.getElementById('gearAddBtn').addEventListener('click', addGear);
+  document.getElementById('gearSortBtn').addEventListener('click', toggleSort);
+  document.getElementById('gearName').addEventListener('keydown', function(e) { if (e.key === 'Enter') addGear(); });
+  document.getElementById('gearDate').addEventListener('keydown', function(e) { if (e.key === 'Enter') addGear(); });
+})();
 </script>
