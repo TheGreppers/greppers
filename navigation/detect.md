@@ -732,6 +732,11 @@ const SFI_CATEGORIES = [
   }
 ];
 
+// ── API Base ────────────────────────────────────────
+const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:8423'
+  : 'https://greppers-be.opencodingsociety.com';
+
 // ── Globals ─────────────────────────────────────────
 let cocoModel = null;
 let mnetModel = null;
@@ -923,6 +928,11 @@ async function analyzeImage(imgEl) {
 
     // Display results
     displayResults(sfiResults, mnetResults, cocoResults);
+
+    // Append matching spec PDFs for the top detected category
+    if (sfiResults.length > 0) {
+      fetchAndAppendSpecs(sfiResults[0].cat.name);
+    }
   } catch (err) {
     console.error('Analysis error:', err);
     resultsDiv.innerHTML = '<div class="no-results">Analysis failed. Please try a different image.</div>';
@@ -1165,6 +1175,57 @@ function displayResults(sfiResults, globalMnet, cocoResults) {
     </details>`;
 
   div.innerHTML = html;
+}
+
+// ── Fetch & Append Matching Spec PDFs ───────────────
+async function fetchAndAppendSpecs(keyword) {
+  const div = document.getElementById('detectResults');
+
+  // Add a loading placeholder
+  const placeholder = document.createElement('div');
+  placeholder.id = 'specPdfSection';
+  placeholder.style.cssText = 'margin-top:20px;font-family:"Inter",sans-serif;font-size:0.8rem;color:var(--sfi-muted);';
+  placeholder.textContent = 'Looking up spec PDFs\u2026';
+  div.appendChild(placeholder);
+
+  try {
+    const res = await fetch(`${API_BASE}/api/sfi/specs/search?q=${encodeURIComponent(keyword)}`);
+    if (!res.ok) throw new Error('API error');
+    const specs = await res.json();
+
+    if (!specs.length) {
+      placeholder.remove();
+      return;
+    }
+
+    let html = `<div style="margin-top:24px;border-top:1px solid var(--sfi-border);padding-top:16px;">
+      <div style="font-family:'Inter',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--sfi-muted);margin-bottom:12px;">Matching SFI Specifications</div>`;
+
+    specs.forEach(s => {
+      const pdfs = [];
+      if (s.spec_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.spec_pdf}" target="_blank">Spec PDF</a>`);
+      if (s.manufacturer_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.manufacturer_pdf}" target="_blank">Manufacturers</a>`);
+      if (s.products_pdf) pdfs.push(`<a class="sfi-pdf-link" href="https://www.sfifoundation.com/wp-content/pdfs/${s.products_pdf}" target="_blank">Products</a>`);
+      html += `
+        <div class="detect-result-card" style="flex-wrap:wrap;gap:6px;">
+          <div class="detect-result-info" style="flex:1;min-width:0;">
+            <div class="detect-result-name">SFI ${s.spec_number} &mdash; ${s.product_name}</div>
+            <div class="detect-result-items">
+              <span class="sfi-cat-badge">${s.category}</span>
+              ${s.subcategory ? `<span class="sfi-cat-badge">${s.subcategory}</span>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+            ${pdfs.length ? pdfs.join(' &bull; ') : '<span style="color:var(--sfi-muted)">No PDFs</span>'}
+          </div>
+        </div>`;
+    });
+
+    html += '</div>';
+    placeholder.outerHTML = html;
+  } catch (e) {
+    placeholder.remove();
+  }
 }
 
 // ── Build Category Reference Grid ───────────────────
