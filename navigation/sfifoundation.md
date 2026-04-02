@@ -964,7 +964,6 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
   </div>
   <div class="sfi-cat-grid" id="catGrid"></div>
 </div>
-
 <!-- ═══════════════════════════════════════════════════
      FAQ
      ═══════════════════════════════════════════════════ -->

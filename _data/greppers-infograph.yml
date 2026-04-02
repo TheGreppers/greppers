@@ -6,8 +6,9 @@ Description: "SFI certifies the safety gear that protects motorsports drivers wo
 
 Features:
   - "Unified Spec Search — fuzzy matching + TF-IDF scoring so typing 'fire suit' finds SFI 3.2A/5 instantly across all specs"
+  - "AI Visual Scanning — point your camera at any piece of gear and instantly identify its SFI spec number"
+  - "Interactive Safety Showcase — hover over race car parts (helmet, suit, roll bar, fuel cell) to see exact SFI specs from our database"
   - "Admin Spec Manager — staff update specifications through a simple dashboard instead of editing raw HTML"
-  - "AI powered visual spec search to instantly look up manafacturing details"
   - "Mobile-First Redesign — accessible, responsive site that actually works on pit-lane devices"
 
 Tech:
@@ -23,11 +24,3 @@ Metrics:
     value: "< 5 sec"
   - label: "Mobile Accessible"
     value: "100%"
-  - label: "Staff Update Hours Saved"
-    value: "~20 hrs/wk"
-  - label: "Static Pages Replaced"
-    value: "8 → 1"
-  - label: "Part ID Accuracy"
-    value: "> 90%"
-  - label: "WCAG 2.1 AA Compliance"
-    value: "Full"
