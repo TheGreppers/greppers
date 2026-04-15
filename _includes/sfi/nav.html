@@ -8,8 +8,8 @@
       <li><a href="/specs/"{% if page.permalink == '/specs/' %} class="active"{% endif %}>Specs</a></li>
       <li><a href="/services/"{% if page.permalink == '/services/' %} class="active"{% endif %}>Services</a></li>
       <li><a href="/contact/"{% if page.permalink == '/contact/' %} class="active"{% endif %}>Contact</a></li>
-      <li><a href="/quiz/"{% if page.permalink == '/quiz/' %} class="active"{% endif %} style="color:var(--sfi-cyan);">My Gear</a></li>
-      <li><a href="/detect/"{% if page.permalink == '/detect/' %} class="active"{% endif %} style="color:var(--sfi-cyan);">AI Detect</a></li>
+      <li><a href="/quiz/" class="sfi-nav-highlight{% if page.permalink == '/quiz/' %} active{% endif %}">My Gear</a></li>
+      <li><a href="/detect/" class="sfi-nav-highlight{% if page.permalink == '/detect/' %} active{% endif %}">Detect</a></li>
       <li><a href="/sfi-specs/" class="sfi-nav-cta"{% if page.permalink == '/sfi-specs/' %} style="box-shadow:0 0 12px rgba(240,165,0,0.4)"{% endif %}>Spec Search</a></li>
       <li id="navAuth"><a href="/login/" class="sfi-nav-auth-link">Sign In</a></li>
     </ul>
