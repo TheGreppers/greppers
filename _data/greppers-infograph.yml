@@ -8,7 +8,7 @@ Solution: "A working prototype of what an SFI-run system could look like: sign-i
 
 Organization: "SFI Foundation"
 Team: "Aditya Srivastava, Dhyan Soni, Aaryav Lal"
-BackendUrl: "https://github.com/TheGreppers/greppers"
+BackendUrl: "https://github.com/TheGreppers/"
 
 FeatureCards:
   - title: "Plain-English Search"
