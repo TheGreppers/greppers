@@ -1,435 +1,331 @@
-// Greppers (SFI) Infographic Styles
+// ── Greppers / SFI Foundation Infographic ────────────────
+// Editorial case-study aesthetic. Warm, print-like, genuine.
 
-$sfi-blue: #1d4ed8;
-$sfi-blue-light: #60a5fa;
-$sfi-dark: #0a0d14;
-$sfi-card: #0f1420;
-$sfi-border: rgba(29, 78, 216, 0.3);
-$sfi-muted: #8a8fa8;
-$sfi-light: #dce0f0;
+$sfi-cream:    #f5f1eb;
+$sfi-cream-2:  #edeae2;
+$sfi-ink:      #080502;
+$sfi-ink-soft: #3d3830;
+$sfi-muted:    #0d0802;
+$sfi-red:      #8b1c1c;
+$sfi-red-warm: #a32020;
+$sfi-border:   #cec8bc;
+$sfi-white:    #ffffff;
 
-// Break out of the 800px .wrapper container
-.sfi-infograph {
-	width: 100vw;
-	margin-left: calc(50% - 50vw);
-	padding: 2rem clamp(1rem, 5vw, 4rem);
-	box-sizing: border-box;
-	color: $sfi-light;
-	font-family: "Barlow", sans-serif;
+@keyframes sfi-fadein {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.sfi-header {
-	max-width: 1100px;
-	margin: 0 auto 2.5rem;
-	text-align: center;
-	padding: 3.5rem 2rem;
-	background: linear-gradient(135deg, #0a0d14 0%, #0d1a2e 50%, #0a0d14 100%);
-	border-radius: 20px;
-	border: 1px solid $sfi-border;
-	position: relative;
-	overflow: hidden;
+// ── full-bleed container ─────────────────────────────────
+.sfi-wrap {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: $sfi-cream;
+  color: $sfi-ink !important;
+  font-family: "Lora", Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  animation: sfi-fadein 0.55s ease both;
 
-	&::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: repeating-linear-gradient(
-			-45deg,
-			transparent,
-			transparent 18px,
-			rgba(29, 78, 216, 0.03) 18px,
-			rgba(29, 78, 216, 0.03) 19px
-		);
-		pointer-events: none;
-	}
+  // Override dark-theme globals so text stays readable on light backgrounds
+  *, *::before, *::after {
+    color: inherit;
+  }
+
+  a {
+    color: $sfi-red;
+  }
 }
 
-.sfi-badge {
-	display: inline-block;
-	background: linear-gradient(135deg, $sfi-blue, $sfi-blue-light);
-	color: #fff;
-	padding: 0.45rem 1.4rem;
-	border-radius: 50px;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 700;
-	font-size: 0.8rem;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	margin-bottom: 1.5rem;
+// ── HERO ────────────────────────────────────────────────
+.sfi-hero {
+  background: $sfi-white;
+  border-bottom: 1px solid $sfi-border;
+  padding: 5rem clamp(1.5rem, 8vw, 6rem) 4.5rem;
 }
 
-.sfi-title {
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 3rem;
-	font-weight: 900;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	background: linear-gradient(90deg, $sfi-blue, $sfi-blue-light, $sfi-blue);
-	background-size: 200% auto;
-	background-clip: text;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	animation: sfi-gradient 4s ease infinite;
-	margin-bottom: 1rem;
+.sfi-hero-inner {
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-@keyframes sfi-gradient {
-	0% { background-position: 0% center; }
-	50% { background-position: 100% center; }
-	100% { background-position: 0% center; }
+.sfi-eyebrow {
+  display: block;
+  font-family: "DM Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: $sfi-red !important;
+  margin-bottom: 1.25rem;
 }
 
-.sfi-desc {
-	color: $sfi-muted;
-	font-size: 1.05rem;
-	line-height: 1.75;
-	max-width: 750px;
-	margin: 0 auto;
+.sfi-headline {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(2.8rem, 6vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.04;
+  color: $sfi-ink !important;
+  letter-spacing: -0.025em;
+  margin: 0 0 1.5rem;
 }
 
-.sfi-card {
-	max-width: 1100px;
-	margin: 0 auto 2rem;
-	background: linear-gradient(145deg, $sfi-card 0%, #111827 100%);
-	border-radius: 20px;
-	padding: 2.5rem;
-	border: 2px solid $sfi-border;
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+.sfi-rule {
+  width: 2.5rem;
+  height: 2px;
+  background: $sfi-red;
+  margin: 0 auto 1.75rem;
 }
 
-.sfi-card-grid {
-	display: grid;
-	grid-template-columns: 200px 1fr 1fr;
-	gap: 1.75rem;
-	align-items: stretch;
-
-	@media (max-width: 1024px) {
-		grid-template-columns: 1fr 1fr;
-	}
-
-	@media (max-width: 700px) {
-		grid-template-columns: 1fr;
-	}
+.sfi-lede {
+  font-family: "Lora", serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: $sfi-ink-soft !important;
+  max-width: 620px;
+  margin: 0 auto;
 }
 
-.sfi-visual {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 1rem;
-	padding: 1.5rem;
-	background: rgba(0, 0, 0, 0.25);
-	border-radius: 14px;
-	border: 1px solid $sfi-border;
+// ── PITCH ────────────────────────────────────────────────
+.sfi-pitch {
+  max-width: 1100px;
+  text-decoration-color: #080502;
+  margin: 0 auto;
+  padding: 4.5rem clamp(1.5rem, 5vw, 3.5rem);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 3rem clamp(1.5rem, 5vw, 3rem);
+  }
 }
 
-.sfi-icon-wrap {
-	width: 100%;
-	aspect-ratio: 1;
-	border-radius: 14px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 5rem;
-	background: rgba(29, 78, 216, 0.1);
-	border: 1px solid $sfi-border;
+.sfi-pitch-col {
+  padding-top: 1.5rem;
+
+  &--problem {
+    border-top: 2px solid $sfi-red;
+    text-emphasis-color: #080502;
+  }
+
+  &--solution {
+    border-top: 2px solid $sfi-border;
+    text-emphasis-color: #080502;
+  }
 }
 
-.sfi-status {
-	background: linear-gradient(135deg, $sfi-blue, $sfi-blue-light);
-	color: #fff;
-	padding: 0.4rem 1.1rem;
-	border-radius: 20px;
-	font-size: 0.75rem;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	text-align: center;
+.sfi-col-heading {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.65rem;
+  font-weight: 600;
+  color: $sfi-ink !important;
+  margin: 0 0 1rem;
+  letter-spacing: -0.01em;
 }
 
-.sfi-team {
-	text-align: center;
-	margin-top: auto;
+.sfi-col-body {
+  font-size: 0.93rem;
+  line-height: 1.95;
+  color: $sfi-ink-soft !important;
+  margin: 0;
 }
 
-.sfi-team-label {
-	display: block;
-	color: #555;
-	font-size: 0.7rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	margin-bottom: 0.2rem;
+// ── METRICS STRIP ────────────────────────────────────────
+.sfi-metrics {
+  background: $sfi-ink;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.sfi-team-name {
-	display: block;
-	color: $sfi-blue-light;
-	font-weight: 700;
-	font-size: 0.95rem;
+.sfi-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2rem 3.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+
+  &:last-child {
+    border-right: none;
+  }
+
+  @media (max-width: 600px) {
+    padding: 1.5rem 2rem;
+    flex: 1 1 33%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+  }
 }
 
-.sfi-content {
-	display: flex;
-	flex-direction: column;
-	padding: 1.25rem;
-	background: rgba(0, 0, 0, 0.2);
-	border-radius: 14px;
-	border: 1px solid $sfi-border;
+.sfi-metric-val {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: $sfi-white !important;
+  line-height: 1;
 }
 
-.sfi-project-title {
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 1.65rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	color: #fff;
-	margin-bottom: 0.2rem;
+.sfi-metric-lbl {
+  font-family: "DM Mono", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
-.sfi-subtitle {
-	color: $sfi-blue-light;
-	font-size: 0.9rem;
-	font-weight: 600;
-	margin-bottom: 1.1rem;
-	padding-bottom: 0.9rem;
-	border-bottom: 1px solid $sfi-border;
+// ── WHAT WE BUILT ─────────────────────────────────────────
+.sfi-builds {
+  padding: 4.5rem clamp(1.5rem, 5vw, 3.5rem);
+  background: $sfi-cream;
 }
 
-.sfi-keypoints {
-	display: flex;
-	flex-direction: column;
-	gap: 0.55rem;
-	margin-bottom: 1.1rem;
-	flex-grow: 1;
+.sfi-section-tag {
+  font-family: "DM Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: $sfi-muted !important;
+  max-width: 1100px;
+  margin: 0 auto 2rem;
 }
 
-.sfi-keypoint {
-	display: flex;
-	align-items: flex-start;
-	gap: 0.5rem;
-	color: $sfi-light;
-	font-size: 0.88rem;
-	line-height: 1.4;
+.sfi-build-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid $sfi-border;
+  border-left: 1px solid $sfi-border;
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
 }
 
-.sfi-check {
-	color: $sfi-blue-light;
-	font-weight: 900;
-	flex-shrink: 0;
+.sfi-build-item {
+  display: flex;
+  gap: 1.25rem;
+  padding: 2rem 2rem 2rem 1.75rem;
+  border-right: 1px solid $sfi-border;
+  border-bottom: 1px solid $sfi-border;
+  background: $sfi-white;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: $sfi-cream-2;
+  }
 }
 
-.sfi-tech-stack {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.45rem;
-	margin-top: auto;
+.sfi-build-num {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #5c504a;
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
 }
 
-.sfi-tech-tag {
-	background: rgba(29, 78, 216, 0.12);
-	color: $sfi-blue-light;
-	padding: 0.3rem 0.65rem;
-	border-radius: 6px;
-	font-size: 0.72rem;
-	font-weight: 600;
-	border: 1px solid rgba(29, 78, 216, 0.25);
-	font-family: "Barlow Condensed", sans-serif;
-	letter-spacing: 0.5px;
+.sfi-build-text {
+  flex: 1;
+  padding-top: 0.2rem;
 }
 
-.sfi-details {
-	display: flex;
-	flex-direction: column;
-	padding: 1.25rem;
-	background: rgba(0, 0, 0, 0.2);
-	border-radius: 14px;
-	border: 1px solid $sfi-border;
+.sfi-build-title {
+  font-family: "Lora", serif;
+  font-size: 0.97rem;
+  font-weight: 500;
+  color: $sfi-ink !important;
+  margin: 0 0 0.55rem;
 }
 
-.sfi-section-title {
-	color: #fff;
-	font-family: "Barlow Condensed", sans-serif;
-	font-size: 0.95rem;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	margin: 0 0 0.7rem;
-	padding-bottom: 0.45rem;
-	border-bottom: 2px solid $sfi-border;
+.sfi-build-desc {
+  font-size: 0.84rem;
+  line-height: 1.85;
+  color: $sfi-muted !important;
+  margin: 0;
 }
 
-.sfi-about {
-	color: $sfi-muted;
-	font-size: 0.85rem;
-	line-height: 1.65;
-	margin: 0 0 1.2rem;
+// ── FOOTER ──────────────────────────────────────────────
+.sfi-foot {
+  background: $sfi-white;
+  border-top: 1px solid $sfi-border;
+  padding: 2.5rem clamp(1.5rem, 5vw, 3.5rem);
 }
 
-.sfi-impact-list {
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
-	margin-bottom: 1.25rem;
-	flex-grow: 1;
+.sfi-foot-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
-.sfi-impact-item {
-	background: rgba(29, 78, 216, 0.08);
-	color: $sfi-light;
-	padding: 0.45rem 0.7rem;
-	border-radius: 6px;
-	font-size: 0.8rem;
-	border-left: 3px solid $sfi-blue;
+.sfi-foot-team {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
-.sfi-btn {
-	display: inline-block;
-	background: linear-gradient(135deg, $sfi-blue, $sfi-blue-light);
-	color: #fff;
-	padding: 0.7rem 1.4rem;
-	border-radius: 10px;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 700;
-	font-size: 0.95rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	text-decoration: none;
-	text-align: center;
-	transition: transform 0.2s, box-shadow 0.2s;
-	margin-top: auto;
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 8px 25px rgba(29, 78, 216, 0.45);
-		color: #fff;
-		text-decoration: none;
-	}
+.sfi-foot-label {
+  font-family: "DM Mono", monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: $sfi-muted !important;
 }
 
-.sfi-issue-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.4rem;
-	background: linear-gradient(135deg, $sfi-blue, $sfi-blue-light);
-	color: #fff;
-	padding: 0.6rem 1.2rem;
-	border-radius: 10px;
-	font-family: "Barlow Condensed", sans-serif;
-	font-weight: 700;
-	font-size: 0.85rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	text-decoration: none;
-	text-align: center;
-	transition: transform 0.2s, box-shadow 0.2s;
-	margin-top: auto;
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 8px 25px rgba(29, 78, 216, 0.45);
-		color: #fff;
-		text-decoration: none;
-	}
+.sfi-foot-names {
+  font-family: "Lora", serif;
+  font-size: 0.9rem;
+  color: $sfi-ink-soft !important;
 }
 
-// ── Warm amber variant for SFI Foundation ───────────
+.sfi-foot-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
 
-$sfi-amber: #d97706;
-$sfi-amber-light: #fbbf24;
-$sfi-amber-border: rgba(217, 119, 6, 0.3);
+.sfi-cta {
+  display: inline-block;
+  background: $sfi-red;
+  color: $sfi-white !important;
+  padding: 0.65rem 1.4rem;
+  border-radius: 1px;
+  font-family: "DM Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.18s ease, transform 0.15s ease;
 
-.sfi-infograph--warm {
+  &:hover {
+    background: $sfi-red-warm;
+    transform: translateY(-1px);
+    color: $sfi-white !important;
+    text-decoration: none;
+  }
 
-	.sfi-header {
-		background: linear-gradient(135deg, #0a0d14 0%, #1a1408 50%, #0a0d14 100%);
-		border-color: $sfi-amber-border;
+  &--outline {
+    background: transparent;
+    color: $sfi-ink-soft !important;
+    border: 1px solid $sfi-border;
 
-		&::before {
-			background: repeating-linear-gradient(
-				-45deg,
-				transparent,
-				transparent 18px,
-				rgba(217, 119, 6, 0.03) 18px,
-				rgba(217, 119, 6, 0.03) 19px
-			);
-		}
-	}
-
-	.sfi-badge {
-		background: linear-gradient(135deg, $sfi-amber, $sfi-amber-light);
-		color: #1a1408;
-	}
-
-	.sfi-title {
-		background: linear-gradient(90deg, $sfi-amber, $sfi-amber-light, $sfi-amber);
-		background-size: 200% auto;
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-
-	.sfi-card {
-		border-color: $sfi-amber-border;
-	}
-
-	.sfi-visual {
-		border-color: $sfi-amber-border;
-	}
-
-	.sfi-icon-wrap {
-		background: rgba(217, 119, 6, 0.1);
-		border-color: $sfi-amber-border;
-	}
-
-	.sfi-status {
-		background: linear-gradient(135deg, $sfi-amber, $sfi-amber-light);
-		color: #1a1408;
-	}
-
-	.sfi-team-name {
-		color: $sfi-amber-light;
-	}
-
-	.sfi-content {
-		border-color: $sfi-amber-border;
-	}
-
-	.sfi-subtitle {
-		color: $sfi-amber-light;
-		border-bottom-color: $sfi-amber-border;
-	}
-
-	.sfi-check {
-		color: $sfi-amber-light;
-	}
-
-	.sfi-tech-tag {
-		background: rgba(217, 119, 6, 0.12);
-		color: $sfi-amber-light;
-		border-color: rgba(217, 119, 6, 0.25);
-	}
-
-	.sfi-details {
-		border-color: $sfi-amber-border;
-	}
-
-	.sfi-section-title {
-		border-bottom-color: $sfi-amber-border;
-	}
-
-	.sfi-impact-item {
-		background: rgba(217, 119, 6, 0.08);
-		border-left-color: $sfi-amber;
-	}
-
-	.sfi-issue-link {
-		background: linear-gradient(135deg, $sfi-amber, $sfi-amber-light);
-		color: #1a1408;
-
-		&:hover {
-			box-shadow: 0 8px 25px rgba(217, 119, 6, 0.45);
-			color: #1a1408;
-		}
-	}
+    &:hover {
+      background: $sfi-cream;
+      border-color: $sfi-ink-soft;
+      color: $sfi-ink !important;
+      transform: translateY(-1px);
+    }
+  }
 }
