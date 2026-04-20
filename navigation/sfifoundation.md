@@ -6,6 +6,8 @@ search_exclude: true
 ---
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="{{ '/images/sfi/favicon-32x32.png' | relative_url }}" sizes="32x32">
+<link rel="apple-touch-icon" href="{{ '/images/sfi/apple-touch-icon.png' | relative_url }}">
 
 <style>
 /* ── Reset & Variables ─────────────────────────── */
@@ -77,6 +79,23 @@ search_exclude: true
   background: linear-gradient(90deg, var(--sfi-gold), var(--sfi-cyan), var(--sfi-gold));
   border-radius: 2px;
   box-shadow: 0 0 12px rgba(240,165,0,0.4);
+}
+
+/* Real SFI Foundation logo */
+.sfi-hero-logo {
+  display: block;
+  margin: 0 auto 28px;
+  max-width: 280px;
+  width: 80%;
+  height: auto;
+  filter: drop-shadow(0 4px 18px rgba(240,165,0,0.25)) brightness(1.05);
+  background: rgba(255,255,255,0.96);
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(240,165,0,0.25);
+}
+@media (max-width: 600px) {
+  .sfi-hero-logo { max-width: 220px; padding: 10px 16px; margin-bottom: 20px; }
 }
 
 .sfi-hero h1 {
@@ -817,6 +836,7 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
   <div class="sfi-hero" id="sfiHero">
     <canvas id="sfiParticles"></canvas>
     <div class="sfi-hero-content">
+      <img src="{{ '/images/sfi/SFI-Logo.png' | relative_url }}" alt="SFI Foundation" class="sfi-hero-logo">
       <div class="sfi-racing-stripe"></div>
       <p class="sfi-hero-sub">Motorsports Safety Standards</p>
       <h1>SFI <span>Foundation</span></h1>
@@ -1075,7 +1095,7 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
      ═══════════════════════════════════════════════════ -->
 <div class="sfi-section">
   <div class="sfi-footer">
-    <p>&copy; 2025 SFI Foundation, Inc. All rights reserved.</p>
+    <p>&copy; 2026 SFI Foundation, Inc. All rights reserved.</p>
     <p style="margin-top:8px;">
       <a href="{{ site.baseurl }}/sfifoundation/">Home</a> &middot;
       <a href="{{ site.baseurl }}/sfi-specs/">Spec Detection</a> &middot;
