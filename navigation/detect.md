@@ -298,6 +298,46 @@ permalink: /detect/
   font-weight: 700;
   flex-shrink: 0;
 }
+.detect-save-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  background: transparent;
+  color: var(--sfi-gold);
+  border: 1px solid rgba(240,165,0,0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+.detect-save-btn:hover:not(:disabled) {
+  background: rgba(240,165,0,0.14);
+  border-color: var(--sfi-gold);
+  transform: translateY(-1px);
+}
+.detect-save-btn[data-state="saving"] { color: var(--sfi-muted); border-color: rgba(240,165,0,0.2); }
+.detect-save-btn[data-state="saved"]  { color: var(--sfi-green); border-color: rgba(63,185,80,0.45); background: rgba(63,185,80,0.08); cursor: default; }
+.detect-save-btn[data-state="auth"]   { color: var(--sfi-cyan); border-color: rgba(0,212,255,0.45); }
+.detect-save-btn[data-state="error"]  { color: var(--sfi-red); border-color: rgba(248,81,73,0.45); }
+.detect-save-btn:disabled { opacity: 0.9; cursor: default; }
+
+.detect-save-hint {
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 1px dashed rgba(240,165,0,0.35);
+  border-radius: 10px;
+  background: rgba(240,165,0,0.04);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: var(--sfi-muted);
+  line-height: 1.55;
+}
+.detect-save-hint a { color: var(--sfi-gold); font-weight: 600; text-decoration: none; }
+.detect-save-hint a:hover { text-decoration: underline; }
+
 .detect-result-conf-label {
   font-family: 'Inter', sans-serif;
   font-size: 0.65rem;

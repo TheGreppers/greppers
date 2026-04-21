@@ -6,6 +6,79 @@
 
 const DetectRenderer = (() => {
 
+  const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://localhost:8423'
+    : 'https://greppers-be.opencodingsociety.com';
+
+  let _lastResults = [];
+
+  function pickRepresentativeProduct(cat) {
+    return (cat.items && cat.items.length > 0) ? cat.items[0] : cat.name;
+  }
+
+  async function saveToMyGear(result, btn) {
+    const cat = result.cat;
+    const productName = pickRepresentativeProduct(cat);
+    const payload = {
+      name: productName,
+      spec: 'Unknown',
+      category: cat.name,
+      productName: productName,
+      certDate: '',
+      source: 'ai-detection',
+    };
+
+    btn.disabled = true;
+    btn.dataset.state = 'saving';
+    btn.textContent = 'Saving…';
+
+    try {
+      const res = await fetch(API_BASE + '/api/sfi/gear', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.status === 401 || res.status === 403) {
+        btn.dataset.state = 'auth';
+        btn.textContent = 'Sign in to save';
+        btn.disabled = false;
+        return;
+      }
+      if (!res.ok) {
+        throw new Error('HTTP ' + res.status);
+      }
+      const saved = await res.json();
+      btn.dataset.state = 'saved';
+      btn.textContent = saved.status === 'approved' ? 'Saved · Approved' : 'Saved · Pending review';
+    } catch (err) {
+      console.error('save to gear failed:', err);
+      btn.dataset.state = 'error';
+      btn.textContent = 'Save failed — retry';
+      btn.disabled = false;
+    }
+  }
+
+  function injectSaveButtons() {
+    const cards = document.querySelectorAll('#detectResults .detect-result-card');
+    cards.forEach((card, idx) => {
+      if (card.querySelector('.detect-save-btn')) return;
+      const rightCol = card.lastElementChild;
+      if (!rightCol) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'detect-save-btn';
+      btn.dataset.resultIdx = String(idx);
+      btn.textContent = '+ Save to My Gear';
+      btn.title = 'Save this detection to My Gear';
+      btn.addEventListener('click', () => {
+        const result = _lastResults[idx];
+        if (result) saveToMyGear(result, btn);
+      });
+      rightCol.appendChild(btn);
+    });
+  }
+
   // Polyfill roundRect
   if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
     CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
@@ -93,6 +166,7 @@ const DetectRenderer = (() => {
   }
 
   function displayResults(sfiResults, globalMnet, cocoResults) {
+    _lastResults = sfiResults;
     const div = document.getElementById('detectResults');
 
     if (sfiResults.length === 0) {
@@ -126,6 +200,12 @@ const DetectRenderer = (() => {
         </div>`;
     });
 
+    // Small helper panel asking the user to save any / all detected gear.
+    html += `
+      <div class="detect-save-hint">
+        <span>Seen your gear? Save it to <a href="/quiz/">My Gear</a> — administrators review submissions and keep one clean record.</span>
+      </div>`;
+
     html += `
       <details style="margin-top:20px;">
         <summary style="font-family:'Inter',sans-serif;font-size:0.8rem;color:var(--sfi-muted);cursor:pointer;padding:8px 0;">
@@ -140,6 +220,7 @@ const DetectRenderer = (() => {
       </details>`;
 
     div.innerHTML = html;
+    injectSaveButtons();
   }
 
   function buildCatRef() {

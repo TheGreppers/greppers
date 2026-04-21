@@ -290,28 +290,53 @@ permalink: /quiz/
 @media (max-width: 600px) {
   .gear-wrap { padding: 80px 16px 60px; }
   .gear-score-section { flex-direction: column; text-align: center; }
-  .gear-add-bar { flex-direction: column; }
-  .gear-item { flex-wrap: wrap; }
 }
+
+.gear-auth-banner {
+  margin: 0 0 24px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  border: 1px solid var(--sfi-border);
+  background: rgba(22,27,39,0.7);
+  color: var(--sfi-muted);
+}
+.gear-auth-banner.remote {
+  border-color: rgba(63,185,80,0.3);
+  background: rgba(63,185,80,0.06);
+  color: var(--sfi-text);
+}
+.gear-auth-banner.local {
+  border-color: rgba(240,165,0,0.35);
+  background: rgba(240,165,0,0.06);
+}
+.gear-auth-banner a { color: var(--sfi-gold); font-weight: 600; text-decoration: none; }
+.gear-auth-banner a:hover { text-decoration: underline; }
+.gear-auth-banner strong { color: var(--sfi-text); }
+
+/* Pending / rejected item states on the gear list */
+.gear-item.status-pending { border-color: rgba(240,165,0,0.45); background: rgba(240,165,0,0.04); }
+.gear-item.status-rejected { border-color: rgba(248,81,73,0.45); background: rgba(248,81,73,0.04); opacity: 0.8; }
+.gear-status-tag.pending { color: var(--sfi-gold); border: 1px solid rgba(240,165,0,0.35); background: rgba(240,165,0,0.1); }
+.gear-status-tag.rejected { color: var(--sfi-red); border: 1px solid rgba(248,81,73,0.35); background: rgba(248,81,73,0.08); }
+.gear-review-note {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: var(--sfi-muted);
+  font-style: italic;
+}
+
 </style>
 
 <div class="gear-wrap">
 
-  <!-- ═══════════ LOGIN PROMPT (shown when not signed in) ═══════════ -->
-  <div id="gearLoginPrompt" style="display:none;">
-    <div style="text-align:center;padding:80px 20px;">
-      <div style="font-size:3rem;margin-bottom:16px;opacity:0.5;">&#128737;&#65039;</div>
-      <h2 style="font-family:'Oswald',sans-serif;font-size:1.6rem;color:#fff;margin:0 0 10px;">Sign in to track your gear</h2>
-      <p style="color:var(--sfi-muted);font-size:0.92rem;margin:0 0 24px;max-width:400px;display:inline-block;line-height:1.6;">
-        Your equipment, certifications, and safety score are saved to your account so you can access them from anywhere.
-      </p>
-      <br>
-      <a href="/login/" style="display:inline-block;padding:13px 32px;background:linear-gradient(135deg,var(--sfi-gold),var(--sfi-gold-dim));color:#000;font-weight:700;border-radius:10px;text-decoration:none;font-family:'Inter',sans-serif;font-size:0.92rem;transition:transform 0.15s;">Sign In</a>
-    </div>
-  </div>
+  <!-- ═══════════ AUTH BANNER ═══════════ -->
+  <div id="gearAuthBanner" class="gear-auth-banner"></div>
 
-  <!-- ═══════════ MAIN CONTENT (shown when signed in) ═══════════ -->
-  <div id="gearMain" style="display:none;">
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <div id="gearMain">
 
     <!-- ═══════════ SAFETY SCORE ═══════════ -->
     <div class="gear-score-section">

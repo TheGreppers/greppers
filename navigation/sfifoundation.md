@@ -315,7 +315,6 @@ search_exclude: true
   transform: translateX(4px);
 }
 .sfi-value-icon {
-  font-size: 2rem;
   flex-shrink: 0;
   width: 50px;
   height: 50px;
@@ -324,7 +323,9 @@ search_exclude: true
   justify-content: center;
   background: rgba(240,165,0,0.1);
   border-radius: 12px;
+  color: var(--sfi-gold);
 }
+.sfi-value-icon svg { width: 26px; height: 26px; display: block; }
 .sfi-value-text h4 {
   font-family: 'Oswald', sans-serif;
   color: var(--sfi-gold);
@@ -378,10 +379,18 @@ search_exclude: true
 }
 .sfi-program-card:hover::before { opacity: 1; }
 .sfi-program-icon {
-  font-size: 2.5rem;
-  margin-bottom: 14px;
-  display: block;
+  margin: 0 auto 14px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(240,165,0,0.08);
+  border: 1px solid rgba(240,165,0,0.18);
+  border-radius: 14px;
+  color: var(--sfi-gold);
 }
+.sfi-program-icon svg { width: 28px; height: 28px; display: block; }
 .sfi-program-card h3 {
   font-family: 'Oswald', sans-serif;
   font-size: 1rem;
@@ -424,7 +433,17 @@ search_exclude: true
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.3);
 }
-.sfi-cat-icon { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+.sfi-cat-icon {
+  margin: 0 auto 10px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sfi-gold);
+}
+.sfi-cat-icon svg { width: 32px; height: 32px; display: block; }
+.sfi-cat-card:hover .sfi-cat-icon { color: var(--sfi-cyan); transition: color 0.3s; }
 .sfi-cat-name {
   font-family: 'Inter', sans-serif;
   font-weight: 700;
@@ -564,7 +583,6 @@ search_exclude: true
 }
 .sfi-contact-card:hover { border-color: var(--sfi-gold); }
 .sfi-contact-icon {
-  font-size: 1.5rem;
   width: 48px;
   height: 48px;
   display: flex;
@@ -573,7 +591,9 @@ search_exclude: true
   background: rgba(240,165,0,0.1);
   border-radius: 12px;
   flex-shrink: 0;
+  color: var(--sfi-gold);
 }
+.sfi-contact-icon svg { width: 22px; height: 22px; display: block; }
 .sfi-contact-card h4 {
   font-family: 'Oswald', sans-serif;
   color: var(--sfi-gold);
@@ -906,28 +926,55 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     </div>
     <div class="sfi-value-cards">
       <div class="sfi-value-card">
-        <div class="sfi-value-icon">&#127937;</div>
+        <div class="sfi-value-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="3" x2="5" y2="21"/>
+            <path d="M5 4 H19 V14 H5 Z"/>
+            <path d="M5 4 h3.5 v2.5 h-3.5 z M12 4 h3.5 v2.5 h-3.5 z M8.5 6.5 h3.5 v2.5 h-3.5 z M15.5 6.5 h3.5 v2.5 h-3.5 z M5 9 h3.5 v2.5 h-3.5 z M12 9 h3.5 v2.5 h-3.5 z M8.5 11.5 h3.5 v2.5 h-3.5 z M15.5 11.5 h3.5 v2.5 h-3.5 z" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
         <div class="sfi-value-text">
           <h4>Quality Standards</h4>
           <p>Rigorous specification development through technical committees and industry consensus</p>
         </div>
       </div>
       <div class="sfi-value-card">
-        <div class="sfi-value-icon">&#128736;</div>
+        <div class="sfi-value-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3 v6.5 L4 18 a2 2 0 0 0 1.8 3 h12.4 a2 2 0 0 0 1.8 -3 L15 9.5 V3"/>
+            <line x1="8" y1="3" x2="16" y2="3"/>
+            <path d="M6.6 14 h10.8"/>
+            <circle cx="11" cy="17" r="0.8" fill="currentColor" stroke="none"/>
+            <circle cx="14" cy="18" r="0.6" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
         <div class="sfi-value-text">
           <h4>Independent Testing</h4>
           <p>SFI Test Laboratory in Poway, CA serving manufacturers since 1999</p>
         </div>
       </div>
       <div class="sfi-value-card">
-        <div class="sfi-value-icon">&#127758;</div>
+        <div class="sfi-value-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12 h18"/>
+            <path d="M12 3 c3 3 3 15 0 18 c-3 -3 -3 -15 0 -18 Z"/>
+          </svg>
+        </div>
         <div class="sfi-value-text">
           <h4>Global Reach</h4>
           <p>International presence across sanctioning bodies and manufacturers worldwide</p>
         </div>
       </div>
       <div class="sfi-value-card">
-        <div class="sfi-value-icon">&#128170;</div>
+        <div class="sfi-value-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 13 a8 8 0 0 1 16 0 v4 a1.5 1.5 0 0 1 -1.5 1.5 h-13 a1.5 1.5 0 0 1 -1.5 -1.5 Z"/>
+            <path d="M9 18.5 v2 a1 1 0 0 0 1 1 h4 a1 1 0 0 0 1 -1 v-2"/>
+            <path d="M8 12 h8"/>
+            <path d="M7.5 15 h9"/>
+          </svg>
+        </div>
         <div class="sfi-value-text">
           <h4>Racer Safety</h4>
           <p>Established performance benchmarks that protect racers across all disciplines</p>
@@ -947,28 +994,62 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
   </div>
   <div class="sfi-programs-grid">
     <div class="sfi-program-card">
-      <span class="sfi-program-icon">&#128220;</span>
+      <span class="sfi-program-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 3 h9 l4 4 v13 a1 1 0 0 1 -1 1 h-12 a1 1 0 0 1 -1 -1 V4 a1 1 0 0 1 1 -1 Z"/>
+          <path d="M15 3 v4 h4"/>
+          <line x1="9" y1="12" x2="16" y2="12"/>
+          <line x1="9" y1="16" x2="16" y2="16"/>
+        </svg>
+      </span>
       <h3>Specs Program</h3>
       <p>The heart of SFI — developing quality performance specifications through technical committees and industry consensus.</p>
     </div>
     <div class="sfi-program-card">
-      <span class="sfi-program-icon">&#128300;</span>
+      <span class="sfi-program-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3 v6.5 L4 18 a2 2 0 0 0 1.8 3 h12.4 a2 2 0 0 0 1.8 -3 L15 9.5 V3"/>
+          <line x1="8" y1="3" x2="16" y2="3"/>
+          <path d="M6.6 14 h10.8"/>
+          <circle cx="10.5" cy="17" r="0.8" fill="currentColor" stroke="none"/>
+          <circle cx="14" cy="18" r="0.6" fill="currentColor" stroke="none"/>
+        </svg>
+      </span>
       <h3>Test Laboratory</h3>
       <p>Opened in 1999 in Poway, CA — serving manufacturers with independent testing and certification services.</p>
     </div>
     <div class="sfi-program-card">
-      <span class="sfi-program-icon">&#9989;</span>
+      <span class="sfi-program-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2 L20 5 V12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 V5 Z"/>
+          <path d="M8.5 12 L11 14.5 L15.5 10"/>
+        </svg>
+      </span>
       <h3>Tech Inspector Cert</h3>
       <p>Certification program for technical inspectors who verify compliance at racetracks nationwide.</p>
     </div>
     <div class="sfi-program-card">
-      <span class="sfi-program-icon">&#128657;</span>
+      <span class="sfi-program-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="6" width="18" height="14" rx="2"/>
+          <path d="M9 6 V4 a1 1 0 0 1 1 -1 h4 a1 1 0 0 1 1 1 v2"/>
+          <line x1="12" y1="10" x2="12" y2="16"/>
+          <line x1="9" y1="13" x2="15" y2="13"/>
+        </svg>
+      </span>
       <h3>Incident Response</h3>
       <p>Training programs for incident response teams at motorsports events across the country.</p>
     </div>
     <div class="sfi-program-card">
-      <span class="sfi-program-icon">&#128161;</span>
-      <h3>Tech & Safety</h3>
+      <span class="sfi-program-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 13 a8 8 0 0 1 16 0 v4 a1.5 1.5 0 0 1 -1.5 1.5 h-13 a1.5 1.5 0 0 1 -1.5 -1.5 Z"/>
+          <path d="M9 18.5 v2 a1 1 0 0 0 1 1 h4 a1 1 0 0 0 1 -1 v-2"/>
+          <path d="M8 12 h8"/>
+          <path d="M7.5 15 h9"/>
+        </svg>
+      </span>
+      <h3>Tech &amp; Safety</h3>
       <p>Advisories, guidelines, bulletins, and safety articles for the motorsports community.</p>
     </div>
   </div>
@@ -1050,28 +1131,48 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
   <div class="sfi-contact-grid">
     <div class="sfi-contact-info">
       <div class="sfi-contact-card">
-        <div class="sfi-contact-icon">&#128205;</div>
+        <div class="sfi-contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2 C8 2 5 5 5 9 c0 5 7 13 7 13 s7 -8 7 -13 c0 -4 -3 -7 -7 -7 Z"/>
+            <circle cx="12" cy="9" r="2.5"/>
+          </svg>
+        </div>
         <div>
           <h4>Address</h4>
           <p>15708 Pomerado Road<br>Suite N208<br>Poway, CA 92064</p>
         </div>
       </div>
       <div class="sfi-contact-card">
-        <div class="sfi-contact-icon">&#128222;</div>
+        <div class="sfi-contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 4 a1 1 0 0 1 1 -1 h3 l2 5 l-2.5 1.5 a11 11 0 0 0 5 5 L15 12 l5 2 v3 a1 1 0 0 1 -1 1 c-8 0 -14 -6 -14 -14 Z"/>
+          </svg>
+        </div>
         <div>
           <h4>Phone</h4>
           <p>(858) 451-8868</p>
         </div>
       </div>
       <div class="sfi-contact-card">
-        <div class="sfi-contact-icon">&#9993;</div>
+        <div class="sfi-contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <path d="M3 7 L12 13 L21 7"/>
+          </svg>
+        </div>
         <div>
           <h4>Email</h4>
           <p><a href="mailto:sfi@sfifoundation.com">sfi@sfifoundation.com</a></p>
         </div>
       </div>
       <div class="sfi-contact-card">
-        <div class="sfi-contact-icon">&#127760;</div>
+        <div class="sfi-contact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12 h18"/>
+            <path d="M12 3 c3 3 3 15 0 18 c-3 -3 -3 -15 0 -18 Z"/>
+          </svg>
+        </div>
         <div>
           <h4>Website</h4>
           <p><a href="https://www.sfifoundation.com" target="_blank" rel="noopener">sfifoundation.com</a></p>
@@ -1138,14 +1239,32 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
     : "https://greppers-be.opencodingsociety.com";
   var API = API_BASE + "/api/sfi";
 
+  var SVG_ATTR = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
   var CATEGORY_ICONS = {
-    "Auto Racing": "\u{1F3CE}\u{FE0F}",
-    "Drag Racing": "\u{1F6A9}",
-    "Drag Racing Chassis": "\u{1F527}",
-    "Boat Racing": "\u{1F6A4}",
-    "Fuel Related": "\u26FD",
-    "Personal Protective Gear, Restraints & Nets": "\u{1F9BA}",
-    "Tractor Pulling & Chassis": "\u{1F69C}"
+    // Race car (Auto Racing)
+    "Auto Racing":
+      '<svg ' + SVG_ATTR + '><path d="M3 15 l1.5 -4 a2 2 0 0 1 1.6 -1.3 l3.4 -0.7 l3 -3 h3 l3 3 l3.4 0.7 a2 2 0 0 1 1.6 1.3 L22 15"/><path d="M2.5 15 h19 v2 a1 1 0 0 1 -1 1 h-2 a1 1 0 0 1 -1 -1 h-10 a1 1 0 0 1 -1 1 h-2 a1 1 0 0 1 -1 -1 z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/><path d="M9.5 9.5 L10.5 7.5 h3 l1 2"/></svg>',
+    // Christmas tree (Drag Racing start tree)
+    "Drag Racing":
+      '<svg ' + SVG_ATTR + '><rect x="9.5" y="3" width="5" height="14" rx="0.8"/><circle cx="12" cy="5.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12" cy="8.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12" cy="11.5" r="0.9" fill="currentColor" stroke="none"/><circle cx="12" cy="14.5" r="0.9" fill="currentColor" stroke="none"/><line x1="8.5" y1="20" x2="15.5" y2="20"/><line x1="10" y1="17" x2="10" y2="20"/><line x1="14" y1="17" x2="14" y2="20"/></svg>',
+    // Chassis / roll cage
+    "Drag Racing Chassis":
+      '<svg ' + SVG_ATTR + '><path d="M4 17 l2 -6 a2 2 0 0 1 1.8 -1.5 h8.4 a2 2 0 0 1 1.8 1.5 l2 6"/><line x1="4" y1="17" x2="20" y2="17"/><path d="M7.5 9.5 V6 a1 1 0 0 1 1 -1 h7 a1 1 0 0 1 1 1 v3.5"/><line x1="12" y1="5" x2="12" y2="17"/><line x1="6" y1="13" x2="18" y2="13"/></svg>',
+    // Boat
+    "Boat Racing":
+      '<svg ' + SVG_ATTR + '><path d="M3 14 L5 19 a1 1 0 0 0 0.9 0.6 h12.2 a1 1 0 0 0 0.9 -0.6 L21 14 Z"/><path d="M6 14 V10 a1 1 0 0 1 1 -1 h10 a1 1 0 0 1 1 1 v4"/><line x1="12" y1="4" x2="12" y2="9"/><path d="M12 4 L17 8.5 H12"/></svg>',
+    // Fuel pump
+    "Fuel Related":
+      '<svg ' + SVG_ATTR + '><rect x="5" y="3" width="9" height="17" rx="1.5"/><line x1="5" y1="10" x2="14" y2="10"/><rect x="7" y="5.5" width="5" height="3"/><path d="M14 7 h3 a1.5 1.5 0 0 1 1.5 1.5 v7.5 a1.5 1.5 0 0 0 3 0 V10 l-2 -2"/></svg>',
+    // Helmet (PPE)
+    "Personal Protective Gear, Restraints & Nets":
+      '<svg ' + SVG_ATTR + '><path d="M4 13 a8 8 0 0 1 16 0 v2 a2 2 0 0 1 -2 2 H6 a2 2 0 0 1 -2 -2 Z"/><path d="M8 11 h8"/><path d="M10 7.5 a4 4 0 0 1 4 0"/><line x1="5" y1="17" x2="19" y2="17"/></svg>',
+    // Tractor
+    "Tractor Pulling & Chassis":
+      '<svg ' + SVG_ATTR + '><rect x="8" y="7" width="7" height="6" rx="1"/><path d="M15 9 h3 l2 3 v2 h-5"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="2.2"/><line x1="10" y1="7" x2="10" y2="4"/><line x1="8" y1="4" x2="12" y2="4"/></svg>',
+    // Fallback — checkered flag
+    "_default":
+      '<svg ' + SVG_ATTR + '><line x1="5" y1="3" x2="5" y2="21"/><path d="M5 4 H19 V14 H5 Z"/><path d="M5 4 h3.5 v2.5 h-3.5 z M12 4 h3.5 v2.5 h-3.5 z M8.5 6.5 h3.5 v2.5 h-3.5 z M15.5 6.5 h3.5 v2.5 h-3.5 z M5 9 h3.5 v2.5 h-3.5 z M12 9 h3.5 v2.5 h-3.5 z M8.5 11.5 h3.5 v2.5 h-3.5 z M15.5 11.5 h3.5 v2.5 h-3.5 z" fill="currentColor" stroke="none"/></svg>'
   };
 
   // ── Particle Canvas ──────────────────────────────
@@ -1249,14 +1368,19 @@ textarea.sfi-form-field { resize: vertical; min-height: 100px; }
   for (var i = 0; i < fadeEls.length; i++) fadeObserver.observe(fadeEls[i]);
 
   // ── Load Racing Categories from API ──────────────
+  function parseSvg(svgString) {
+    var doc = new DOMParser().parseFromString(svgString, 'image/svg+xml');
+    return doc.documentElement;
+  }
+
   function buildCategoryCard(name, count, baseUrl) {
-    var icon = CATEGORY_ICONS[name] || '\u{1F3C1}';
+    var iconSvg = CATEGORY_ICONS[name] || CATEGORY_ICONS._default;
     var card = document.createElement('a');
     card.href = baseUrl + '/sfi-specs/';
     card.className = 'sfi-cat-card';
     var iconSpan = document.createElement('span');
     iconSpan.className = 'sfi-cat-icon';
-    iconSpan.textContent = icon;
+    iconSpan.appendChild(parseSvg(iconSvg));
     var nameDiv = document.createElement('div');
     nameDiv.className = 'sfi-cat-name';
     nameDiv.textContent = name;

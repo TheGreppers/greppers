@@ -56,6 +56,31 @@ const QuizUI = (() => {
   function getSelectedSpec() { return selectedSpecData; }
   function clearSelectedSpec() { selectedSpecData = null; }
 
+  function updateAuthBanner(remote, authed) {
+    const banner = document.getElementById('gearAuthBanner');
+    if (!banner) return;
+    banner.textContent = '';
+    if (remote) {
+      banner.className = 'gear-auth-banner remote';
+      banner.appendChild(document.createTextNode(
+        'Signed in — your gear is tracked in the central database. Administrators review new submissions.'
+      ));
+    } else {
+      banner.className = 'gear-auth-banner local';
+      const strong = document.createElement('strong');
+      strong.textContent = 'Not signed in.';
+      banner.appendChild(strong);
+      banner.appendChild(document.createTextNode(
+        ' Items stay on this device only and are not visible to administrators. '
+      ));
+      const a = document.createElement('a');
+      a.href = '/login';
+      a.textContent = 'Sign in';
+      banner.appendChild(a);
+      banner.appendChild(document.createTextNode(' to sync your gear.'));
+    }
+  }
+
   // ── Gear List Rendering ───────────────────────────
   function renderGear(sortMode) {
     const gear = QuizData.getGear();
@@ -120,8 +145,28 @@ const QuizUI = (() => {
         else daysText = `${(s.days / 365).toFixed(1)} years left`;
       }
 
+      const cardStatusClass =
+        s.status === 'pending' ? 'pending'
+        : s.status === 'rejected' ? 'rejected'
+        : s.color === 'expired' ? 'expired'
+        : s.color === 'warn' ? 'warn'
+        : 'good';
+
+      const tagClass =
+        s.status === 'pending' ? 'pending'
+        : s.status === 'rejected' ? 'rejected'
+        : s.color;
+
+      const reviewNote = (s.status === 'rejected' && g.reviewNote)
+        ? `<div class="gear-review-note">Reviewer: ${g.reviewNote}</div>`
+        : '';
+
+      const sourceTag = g.source === 'ai-detection'
+        ? '<span title="Saved from the AI Equipment Detector">AI detect</span>'
+        : '';
+
       return `
-        <div class="gear-item status-${s.color === 'expired' ? 'expired' : s.color === 'warn' ? 'warn' : 'good'}">
+        <div class="gear-item status-${cardStatusClass}">
           <div class="gear-item-icon">${icon}</div>
           <div class="gear-item-info">
             <div class="gear-item-name">${g.name}</div>
@@ -129,10 +174,12 @@ const QuizUI = (() => {
             <div class="gear-item-meta">
               ${g.category ? `<span>${g.category}</span>` : ''}
               ${g.certDate ? `<span>Cert: ${g.certDate}</span>` : '<span>No cert date</span>'}
+              ${sourceTag}
             </div>
+            ${reviewNote}
           </div>
           <div class="gear-item-status">
-            <div class="gear-status-tag ${s.color}">${s.label}</div>
+            <div class="gear-status-tag ${tagClass}">${s.label}</div>
             ${daysText ? `<div class="gear-days-left">${daysText}</div>` : ''}
           </div>
           <button class="gear-item-del" onclick="removeGear(${g.id})" title="Remove">&times;</button>
@@ -140,5 +187,5 @@ const QuizUI = (() => {
     }).join('');
   }
 
-  return { initAutocomplete, getSelectedSpec, clearSelectedSpec, renderGear };
+  return { initAutocomplete, getSelectedSpec, clearSelectedSpec, renderGear, updateAuthBanner };
 })();
