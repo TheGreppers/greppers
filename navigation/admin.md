@@ -8,14 +8,14 @@ search_exclude: true
 
 <style>
 .adm-wrap {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 100px 24px 80px;
   font-family: 'Inter', sans-serif;
   color: var(--sfi-text);
 }
 
-.adm-head { margin-bottom: 28px; }
+.adm-head { margin-bottom: 18px; }
 .adm-head .adm-eyebrow {
   font-family: 'DM Mono', monospace;
   font-size: 0.66rem;
@@ -45,7 +45,37 @@ search_exclude: true
 }
 .adm-gate h2 { font-family: 'Oswald', sans-serif; color: var(--sfi-text); margin: 0 0 10px; letter-spacing: 1px; }
 .adm-gate p { color: var(--sfi-muted); margin: 0 0 18px; }
-.adm-gate .adm-btn { display: inline-block; }
+
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 20px 0 26px;
+}
+.adm-stat {
+  background: var(--sfi-surface);
+  border: 1px solid var(--sfi-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.adm-stat .label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sfi-muted);
+  margin-bottom: 6px;
+}
+.adm-stat .value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.adm-stat.gold .value { color: var(--sfi-gold); }
+.adm-stat.green .value { color: var(--sfi-green); }
+.adm-stat.red .value { color: var(--sfi-red); }
 
 .adm-tabs {
   display: flex;
@@ -99,6 +129,26 @@ search_exclude: true
   margin: 0 0 12px;
 }
 
+.adm-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.adm-toolbar .adm-input { max-width: 320px; }
+.adm-toolbar .hint { color: var(--sfi-muted); font-size: 0.78rem; }
+.adm-select {
+  padding: 9px 12px;
+  border: 1px solid var(--sfi-border);
+  background: var(--sfi-dark);
+  color: var(--sfi-text);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+}
+.adm-select:focus { outline: none; border-color: var(--sfi-gold); }
+
 .adm-table {
   width: 100%;
   border-collapse: collapse;
@@ -108,6 +158,7 @@ search_exclude: true
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--sfi-border);
+  vertical-align: middle;
 }
 .adm-table th {
   font-family: 'DM Mono', monospace;
@@ -119,6 +170,32 @@ search_exclude: true
 }
 .adm-table tr:last-child td { border-bottom: none; }
 .adm-table td .chip-stack { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.adm-user-row { cursor: pointer; transition: background 0.1s; }
+.adm-user-row:hover { background: rgba(240,165,0,0.04); }
+.adm-user-row.open { background: rgba(240,165,0,0.08); }
+.adm-user-row .caret {
+  display: inline-block;
+  width: 14px;
+  color: var(--sfi-muted);
+  transition: transform 0.15s;
+  margin-right: 6px;
+}
+.adm-user-row.open .caret { transform: rotate(90deg); color: var(--sfi-gold); }
+
+.adm-drill {
+  background: var(--sfi-dark);
+  border-top: 1px solid var(--sfi-border);
+}
+.adm-drill-inner { padding: 16px 18px 20px; }
+.adm-drill h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--sfi-gold);
+  margin: 0 0 10px;
+}
 
 .adm-chip {
   display: inline-block;
@@ -136,6 +213,23 @@ search_exclude: true
 .adm-chip.ok { color: var(--sfi-green); border-color: rgba(63,185,80,0.35); background: rgba(63,185,80,0.08); }
 .adm-chip.warn { color: var(--sfi-gold); border-color: rgba(240,165,0,0.35); background: rgba(240,165,0,0.08); }
 .adm-chip.bad { color: var(--sfi-red); border-color: rgba(248,81,73,0.35); background: rgba(248,81,73,0.08); }
+
+.adm-count-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  border-radius: 10px;
+  border: 1px solid var(--sfi-border);
+  background: var(--sfi-surface2);
+  color: var(--sfi-muted);
+  margin-right: 4px;
+}
+.adm-count-pill.warn { color: var(--sfi-gold); border-color: rgba(240,165,0,0.35); background: rgba(240,165,0,0.08); }
+.adm-count-pill.ok { color: var(--sfi-green); border-color: rgba(63,185,80,0.35); background: rgba(63,185,80,0.08); }
+.adm-count-pill.bad { color: var(--sfi-red); border-color: rgba(248,81,73,0.35); background: rgba(248,81,73,0.08); }
+
+.adm-none { color: var(--sfi-muted); font-size: 0.78rem; font-style: italic; }
 
 .adm-btn {
   font-family: 'Inter', sans-serif;
@@ -163,7 +257,12 @@ search_exclude: true
 }
 .adm-btn.primary:hover { transform: translateY(-1px); color: #000; }
 .adm-btn.danger { color: var(--sfi-red); border-color: rgba(248,81,73,0.35); }
+.adm-btn.danger:hover { background: rgba(248,81,73,0.1); border-color: var(--sfi-red); color: var(--sfi-red); }
 .adm-btn.small { font-size: 0.72rem; padding: 5px 10px; }
+.adm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.adm-actions-cell { white-space: nowrap; }
+.adm-actions-cell .adm-btn + .adm-btn { margin-left: 6px; }
 
 .adm-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .adm-input {
@@ -241,7 +340,7 @@ search_exclude: true
   <div class="adm-head">
     <div class="adm-eyebrow">SFI Foundation</div>
     <h1>Admin <span>Portal</span></h1>
-    <p>Manage users, permission groups, and moderate gear submitted by members. Administrators see the centralized gear database and can approve or reject records from lower groups.</p>
+    <p>Manage users, inspect their gear submissions, and run the moderation queue. Only members of the <code>administrators</code> group can access this page.</p>
   </div>
 
   <div id="admGate" class="adm-gate" style="display:none;">
@@ -251,15 +350,40 @@ search_exclude: true
   </div>
 
   <div id="admMain" style="display:none;">
+    <div class="adm-stats">
+      <div class="adm-stat"><div class="label">Users</div><div class="value" id="stUsers">—</div></div>
+      <div class="adm-stat gold"><div class="label">Administrators</div><div class="value" id="stAdmins">—</div></div>
+      <div class="adm-stat"><div class="label">Pending Gear</div><div class="value" id="stPending">—</div></div>
+      <div class="adm-stat green"><div class="label">Approved Gear</div><div class="value" id="stApproved">—</div></div>
+      <div class="adm-stat red"><div class="label">Rejected Gear</div><div class="value" id="stRejected">—</div></div>
+    </div>
+
     <div class="adm-tabs" role="tablist">
-      <button type="button" class="adm-tab active" data-panel="panel-pending">Pending Gear <span class="count" id="cntPending">0</span></button>
+      <button type="button" class="adm-tab active" data-panel="panel-users">Users <span class="count" id="cntUsers">0</span></button>
+      <button type="button" class="adm-tab" data-panel="panel-pending">Pending Gear <span class="count" id="cntPending">0</span></button>
       <button type="button" class="adm-tab" data-panel="panel-gear">All Gear <span class="count" id="cntGear">0</span></button>
-      <button type="button" class="adm-tab" data-panel="panel-users">Users <span class="count" id="cntUsers">0</span></button>
       <button type="button" class="adm-tab" data-panel="panel-groups">Groups <span class="count" id="cntGroups">0</span></button>
     </div>
 
+    <!-- ── Users (primary) ────────────────────────── -->
+    <section id="panel-users" class="adm-panel active">
+      <div class="adm-card">
+        <h3>Users &amp; Their Gear</h3>
+        <div class="adm-toolbar">
+          <input type="search" class="adm-input" id="userSearch" placeholder="Search by name, username, or role…">
+          <select class="adm-select" id="userRoleFilter">
+            <option value="all">All users</option>
+            <option value="admin">Administrators only</option>
+            <option value="non-admin">Non-admins only</option>
+          </select>
+          <span class="hint">Click a row to see that user's gear.</span>
+        </div>
+        <div id="usersBody" class="adm-loading">Loading users…</div>
+      </div>
+    </section>
+
     <!-- ── Pending Gear ───────────────────────────── -->
-    <section id="panel-pending" class="adm-panel active">
+    <section id="panel-pending" class="adm-panel">
       <div class="adm-card">
         <h3>Awaiting Review</h3>
         <div id="pendingBody" class="adm-loading">Loading pending submissions…</div>
@@ -270,15 +394,16 @@ search_exclude: true
     <section id="panel-gear" class="adm-panel">
       <div class="adm-card">
         <h3>Centralized Gear Database</h3>
+        <div class="adm-toolbar">
+          <input type="search" class="adm-input" id="gearSearch" placeholder="Search by owner, item, or spec…">
+          <select class="adm-select" id="gearStatusFilter">
+            <option value="all">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
         <div id="gearBody" class="adm-loading">Loading gear…</div>
-      </div>
-    </section>
-
-    <!-- ── Users ───────────────────────────────────── -->
-    <section id="panel-users" class="adm-panel">
-      <div class="adm-card">
-        <h3>Users</h3>
-        <div id="usersBody" class="adm-loading">Loading users…</div>
       </div>
     </section>
 
@@ -314,7 +439,17 @@ search_exclude: true
   const gateMsg = document.getElementById('admGateMsg');
   const main = document.getElementById('admMain');
 
-  const state = { me: null, users: [], groups: [], pending: [], allGear: [] };
+  const state = {
+    me: null,
+    users: [],
+    groups: [],
+    pending: [],
+    allGear: [],
+    gearByUserId: new Map(),
+    userFilter: { q: '', role: 'all' },
+    gearFilter: { q: '', status: 'all' },
+    openUserIds: new Set(),
+  };
 
   async function api(path, options = {}) {
     const res = await fetch(API_BASE + path, {
@@ -347,7 +482,9 @@ search_exclude: true
     }
     main.style.display = 'block';
     wireTabs();
-    await Promise.all([loadPending(), loadAllGear(), loadUsers(), loadGroups()]);
+    wireFilters();
+    await Promise.all([loadAllGear(), loadPending(), loadUsers(), loadGroups()]);
+    refreshStats();
   }
 
   function showGate(message) {
@@ -366,6 +503,74 @@ search_exclude: true
     document.getElementById('createGroupBtn').addEventListener('click', createGroup);
   }
 
+  function wireFilters() {
+    document.getElementById('userSearch').addEventListener('input', e => {
+      state.userFilter.q = e.target.value.trim().toLowerCase();
+      renderUsers();
+    });
+    document.getElementById('userRoleFilter').addEventListener('change', e => {
+      state.userFilter.role = e.target.value;
+      renderUsers();
+    });
+    document.getElementById('gearSearch').addEventListener('input', e => {
+      state.gearFilter.q = e.target.value.trim().toLowerCase();
+      renderAllGear();
+    });
+    document.getElementById('gearStatusFilter').addEventListener('change', e => {
+      state.gearFilter.status = e.target.value;
+      renderAllGear();
+    });
+  }
+
+  // ── Stats ───────────────────────────────────────────
+  function refreshStats() {
+    document.getElementById('stUsers').textContent = String(state.users.length);
+    const admins = state.users.filter(u => (u.groups || []).some(gr => gr.name === 'administrators')).length;
+    document.getElementById('stAdmins').textContent = String(admins);
+    const pend = state.allGear.filter(g => g.status === 'pending').length;
+    const appr = state.allGear.filter(g => g.status === 'approved').length;
+    const rej = state.allGear.filter(g => g.status === 'rejected').length;
+    document.getElementById('stPending').textContent = String(pend);
+    document.getElementById('stApproved').textContent = String(appr);
+    document.getElementById('stRejected').textContent = String(rej);
+  }
+
+  // ── All Gear (used by Users drilldown + All Gear tab) ──
+  async function loadAllGear() {
+    try { state.allGear = await api('/api/sfi/gear/all'); }
+    catch { state.allGear = []; }
+    state.gearByUserId = new Map();
+    state.allGear.forEach(g => {
+      const uid = g.userId;
+      if (!state.gearByUserId.has(uid)) state.gearByUserId.set(uid, []);
+      state.gearByUserId.get(uid).push(g);
+    });
+    document.getElementById('cntGear').textContent = String(state.allGear.length);
+    renderAllGear();
+  }
+
+  function renderAllGear() {
+    const body = document.getElementById('gearBody');
+    body.className = '';
+    body.textContent = '';
+    const q = state.gearFilter.q;
+    const s = state.gearFilter.status;
+    const filtered = state.allGear.filter(g => {
+      if (s !== 'all' && g.status !== s) return false;
+      if (!q) return true;
+      const hay = [
+        g.name, g.spec, g.category, g.source, g.status,
+        g.owner ? g.owner.name : '', g.owner ? g.owner.uid : '',
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+    if (!filtered.length) {
+      body.appendChild(makeEmpty('No gear matches the current filter.'));
+      return;
+    }
+    body.appendChild(makeGearTable(filtered, { showActions: true, showOwner: true }));
+  }
+
   // ── Pending Gear ────────────────────────────────────
   async function loadPending() {
     try { state.pending = await api('/api/sfi/gear/pending'); }
@@ -382,31 +587,37 @@ search_exclude: true
       body.appendChild(makeEmpty('No pending submissions. The queue is clear.'));
       return;
     }
-    const table = makeGearTable(state.pending, true);
-    body.appendChild(table);
+    body.appendChild(makeGearTable(state.pending, { showActions: true, showOwner: true }));
   }
 
-  function makeGearTable(items, showActions) {
+  function makeGearTable(items, opts) {
+    opts = opts || {};
     const table = document.createElement('table');
     table.className = 'adm-table';
     const thead = document.createElement('thead');
     const headRow = document.createElement('tr');
-    ['Owner', 'Item', 'SFI', 'Category', 'Source', 'Status', showActions ? 'Review' : 'Created']
-      .forEach(h => { const th = document.createElement('th'); th.textContent = h; headRow.appendChild(th); });
+    const cols = [];
+    if (opts.showOwner) cols.push('Owner');
+    cols.push('Item', 'SFI', 'Category', 'Source', 'Status', 'Created', 'Actions');
+    cols.forEach(h => { const th = document.createElement('th'); th.textContent = h; headRow.appendChild(th); });
     thead.appendChild(headRow);
     table.appendChild(thead);
 
     const tbody = document.createElement('tbody');
-    items.forEach(g => tbody.appendChild(makeGearRow(g, showActions)));
+    items.forEach(g => tbody.appendChild(makeGearRow(g, opts)));
     table.appendChild(tbody);
     return table;
   }
 
-  function makeGearRow(g, showActions) {
+  function makeGearRow(g, opts) {
+    opts = opts || {};
     const row = document.createElement('tr');
-    const owner = g.owner ? (g.owner.name + ' · ' + g.owner.uid) : '—';
+    if (opts.showOwner) {
+      const ownerTd = document.createElement('td');
+      ownerTd.textContent = g.owner ? (g.owner.name + ' · ' + g.owner.uid) : '—';
+      row.appendChild(ownerTd);
+    }
     [
-      owner,
       g.name,
       'SFI ' + (g.spec || '—'),
       g.category || '—',
@@ -420,26 +631,58 @@ search_exclude: true
     statusTd.appendChild(chip);
     row.appendChild(statusTd);
 
-    const lastTd = document.createElement('td');
-    if (showActions) {
-      const approveBtn = document.createElement('button');
-      approveBtn.className = 'adm-btn approve small';
-      approveBtn.textContent = 'Approve';
-      approveBtn.addEventListener('click', () => reviewGear(g.id, 'approved', ''));
-      const rejectBtn = document.createElement('button');
-      rejectBtn.className = 'adm-btn reject small';
-      rejectBtn.style.marginLeft = '6px';
-      rejectBtn.textContent = 'Reject';
-      rejectBtn.addEventListener('click', () => {
-        const note = prompt('Reason for rejecting this submission? (optional)') || '';
-        reviewGear(g.id, 'rejected', note);
+    const createdTd = document.createElement('td');
+    createdTd.textContent = g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '—';
+    row.appendChild(createdTd);
+
+    const actTd = document.createElement('td');
+    actTd.className = 'adm-actions-cell';
+    if (opts.showActions !== false) {
+      if (g.status === 'pending') {
+        const approveBtn = document.createElement('button');
+        approveBtn.className = 'adm-btn approve small';
+        approveBtn.textContent = 'Approve';
+        approveBtn.addEventListener('click', (e) => { e.stopPropagation(); reviewGear(g.id, 'approved', ''); });
+        actTd.appendChild(approveBtn);
+
+        const rejectBtn = document.createElement('button');
+        rejectBtn.className = 'adm-btn reject small';
+        rejectBtn.textContent = 'Reject';
+        rejectBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const note = prompt('Reason for rejecting this submission? (optional)') || '';
+          reviewGear(g.id, 'rejected', note);
+        });
+        actTd.appendChild(rejectBtn);
+      } else if (g.status === 'approved') {
+        const rejectBtn = document.createElement('button');
+        rejectBtn.className = 'adm-btn reject small';
+        rejectBtn.textContent = 'Reject';
+        rejectBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const note = prompt('Reason for rejecting this item? (optional)') || '';
+          reviewGear(g.id, 'rejected', note);
+        });
+        actTd.appendChild(rejectBtn);
+      } else if (g.status === 'rejected') {
+        const approveBtn = document.createElement('button');
+        approveBtn.className = 'adm-btn approve small';
+        approveBtn.textContent = 'Approve';
+        approveBtn.addEventListener('click', (e) => { e.stopPropagation(); reviewGear(g.id, 'approved', ''); });
+        actTd.appendChild(approveBtn);
+      }
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'adm-btn danger small';
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!confirm('Delete this gear entry? This cannot be undone.')) return;
+        deleteGear(g.id);
       });
-      lastTd.appendChild(approveBtn);
-      lastTd.appendChild(rejectBtn);
-    } else {
-      lastTd.textContent = g.createdAt ? new Date(g.createdAt).toLocaleDateString() : '—';
+      actTd.appendChild(delBtn);
     }
-    row.appendChild(lastTd);
+    row.appendChild(actTd);
     return row;
   }
 
@@ -450,28 +693,22 @@ search_exclude: true
         body: JSON.stringify({ status, note }),
       });
       await Promise.all([loadPending(), loadAllGear()]);
+      renderUsers();
+      refreshStats();
     } catch (err) {
       alert('Review failed: ' + (err.body || err.message));
     }
   }
 
-  // ── All Gear ────────────────────────────────────────
-  async function loadAllGear() {
-    try { state.allGear = await api('/api/sfi/gear/all'); }
-    catch { state.allGear = []; }
-    renderAllGear();
-  }
-
-  function renderAllGear() {
-    document.getElementById('cntGear').textContent = String(state.allGear.length);
-    const body = document.getElementById('gearBody');
-    body.className = '';
-    body.textContent = '';
-    if (!state.allGear.length) {
-      body.appendChild(makeEmpty('No gear recorded yet.'));
-      return;
+  async function deleteGear(id) {
+    try {
+      await api('/api/sfi/gear/' + id, { method: 'DELETE' });
+      await Promise.all([loadPending(), loadAllGear()]);
+      renderUsers();
+      refreshStats();
+    } catch (err) {
+      alert('Delete failed: ' + (err.body || err.message));
     }
-    body.appendChild(makeGearTable(state.allGear, false));
   }
 
   // ── Users ───────────────────────────────────────────
@@ -479,6 +716,21 @@ search_exclude: true
     try { state.users = await api('/api/sfi/users'); }
     catch { state.users = []; }
     renderUsers();
+    refreshStats();
+  }
+
+  function filteredUsers() {
+    const q = state.userFilter.q;
+    const role = state.userFilter.role;
+    return state.users.filter(u => {
+      const isAdmin = (u.groups || []).some(gr => gr.name === 'administrators');
+      if (role === 'admin' && !isAdmin) return false;
+      if (role === 'non-admin' && isAdmin) return false;
+      if (!q) return true;
+      const groupNames = (u.groups || []).map(gr => gr.name).join(' ');
+      const hay = [u.name, u.uid, u.role, groupNames].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
   }
 
   function renderUsers() {
@@ -486,25 +738,57 @@ search_exclude: true
     const body = document.getElementById('usersBody');
     body.className = '';
     body.textContent = '';
-    if (!state.users.length) {
-      body.appendChild(makeEmpty('No users to display.'));
+
+    const list = filteredUsers();
+    if (!list.length) {
+      body.appendChild(makeEmpty('No users match the current filter.'));
       return;
     }
+
     const table = document.createElement('table');
     table.className = 'adm-table';
     const thead = document.createElement('thead');
     const hr = document.createElement('tr');
-    ['User', 'Username', 'Role', 'Groups'].forEach(h => { const th = document.createElement('th'); th.textContent = h; hr.appendChild(th); });
+    ['User', 'Username', 'Role', 'Groups', 'Gear', 'Actions'].forEach(h => {
+      const th = document.createElement('th'); th.textContent = h; hr.appendChild(th);
+    });
     thead.appendChild(hr);
     table.appendChild(thead);
+
     const tbody = document.createElement('tbody');
-    state.users.forEach(u => {
+    list.forEach(u => {
+      const isOpen = state.openUserIds.has(u.id);
+      const isAdmin = (u.groups || []).some(gr => gr.name === 'administrators');
+      const userGear = state.gearByUserId.get(u.id) || [];
+      const pCount = userGear.filter(g => g.status === 'pending').length;
+      const aCount = userGear.filter(g => g.status === 'approved').length;
+      const rCount = userGear.filter(g => g.status === 'rejected').length;
+
       const tr = document.createElement('tr');
-      [u.name, u.uid, u.role].forEach(v => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+      tr.className = 'adm-user-row' + (isOpen ? ' open' : '');
+      tr.addEventListener('click', () => {
+        if (state.openUserIds.has(u.id)) state.openUserIds.delete(u.id);
+        else state.openUserIds.add(u.id);
+        renderUsers();
+      });
+
+      // User (with caret)
+      const userTd = document.createElement('td');
+      const caret = document.createElement('span');
+      caret.className = 'caret';
+      caret.textContent = '▸';
+      userTd.appendChild(caret);
+      userTd.appendChild(document.createTextNode(u.name || '—'));
+      tr.appendChild(userTd);
+
+      const uidTd = document.createElement('td'); uidTd.textContent = u.uid; tr.appendChild(uidTd);
+      const roleTd = document.createElement('td'); roleTd.textContent = u.role || 'User'; tr.appendChild(roleTd);
+
+      // Groups
       const gtd = document.createElement('td');
       const stack = document.createElement('div');
       stack.className = 'chip-stack';
-      u.groups.forEach(gr => {
+      (u.groups || []).forEach(gr => {
         const ch = document.createElement('span');
         ch.className = 'adm-chip' + (gr.name === 'administrators' ? ' admin' : '');
         ch.textContent = gr.name;
@@ -512,10 +796,117 @@ search_exclude: true
       });
       gtd.appendChild(stack);
       tr.appendChild(gtd);
+
+      // Gear counts
+      const geartd = document.createElement('td');
+      if (pCount === 0 && aCount === 0 && rCount === 0) {
+        const none = document.createElement('span');
+        none.className = 'adm-none';
+        none.textContent = 'none';
+        geartd.appendChild(none);
+      } else {
+        if (pCount) { const p = document.createElement('span'); p.className = 'adm-count-pill warn'; p.textContent = pCount + ' pending'; geartd.appendChild(p); }
+        if (aCount) { const p = document.createElement('span'); p.className = 'adm-count-pill ok'; p.textContent = aCount + ' approved'; geartd.appendChild(p); }
+        if (rCount) { const p = document.createElement('span'); p.className = 'adm-count-pill bad'; p.textContent = rCount + ' rejected'; geartd.appendChild(p); }
+      }
+      tr.appendChild(geartd);
+
+      // Actions
+      const actTd = document.createElement('td');
+      actTd.className = 'adm-actions-cell';
+      actTd.addEventListener('click', e => e.stopPropagation());
+
+      const toggleAdminBtn = document.createElement('button');
+      toggleAdminBtn.className = 'adm-btn small' + (isAdmin ? ' danger' : '');
+      toggleAdminBtn.textContent = isAdmin ? 'Revoke admin' : 'Make admin';
+      // Block removing your own admin role, and block removing baseline admin
+      if (isAdmin && (u.id === state.me.id || u.uid === 'admin')) {
+        toggleAdminBtn.disabled = true;
+        toggleAdminBtn.title = u.uid === 'admin' ? 'The baseline admin cannot be removed.' : 'You cannot revoke your own admin access.';
+      } else {
+        toggleAdminBtn.addEventListener('click', () => toggleAdmin(u, isAdmin));
+      }
+      actTd.appendChild(toggleAdminBtn);
+
+      tr.appendChild(actTd);
       tbody.appendChild(tr);
+
+      // Drilldown row
+      if (isOpen) {
+        const drillTr = document.createElement('tr');
+        drillTr.className = 'adm-drill';
+        const drillTd = document.createElement('td');
+        drillTd.colSpan = 6;
+        const inner = document.createElement('div');
+        inner.className = 'adm-drill-inner';
+
+        const h = document.createElement('h4');
+        h.textContent = (u.name || u.uid) + ' — Gear (' + userGear.length + ')';
+        inner.appendChild(h);
+
+        if (!userGear.length) {
+          inner.appendChild(makeEmpty('This user has not recorded any gear yet.'));
+        } else {
+          inner.appendChild(makeGearTable(userGear, { showActions: true, showOwner: false }));
+        }
+
+        // Group membership quick-add area (only for groups the user is not already in)
+        const groupRow = document.createElement('div');
+        groupRow.className = 'adm-row';
+        groupRow.style.marginTop = '12px';
+        const memberOfIds = new Set((u.groups || []).map(gr => gr.id));
+        const sel = document.createElement('select');
+        sel.className = 'adm-select';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Add to group…';
+        sel.appendChild(placeholder);
+        state.groups.forEach(gr => {
+          if (memberOfIds.has(gr.id)) return;
+          const opt = document.createElement('option');
+          opt.value = String(gr.id);
+          opt.textContent = gr.name;
+          sel.appendChild(opt);
+        });
+        const addBtn = document.createElement('button');
+        addBtn.className = 'adm-btn small';
+        addBtn.textContent = 'Add';
+        addBtn.addEventListener('click', async () => {
+          if (!sel.value) return;
+          await addMember(parseInt(sel.value, 10), u.id);
+        });
+        groupRow.appendChild(sel);
+        groupRow.appendChild(addBtn);
+        inner.appendChild(groupRow);
+
+        drillTd.appendChild(inner);
+        drillTr.appendChild(drillTd);
+        tbody.appendChild(drillTr);
+      }
     });
+
     table.appendChild(tbody);
     body.appendChild(table);
+  }
+
+  async function toggleAdmin(user, isAdmin) {
+    const adminGroup = state.groups.find(gr => gr.name === 'administrators');
+    if (!adminGroup) { alert('Could not find the administrators group.'); return; }
+    try {
+      if (isAdmin) {
+        if (!confirm('Revoke admin privileges from ' + (user.name || user.uid) + '?')) return;
+        await api('/api/sfi/groups/' + adminGroup.id + '/members/' + user.id, { method: 'DELETE' });
+      } else {
+        if (!confirm('Grant admin privileges to ' + (user.name || user.uid) + '?')) return;
+        await api('/api/sfi/groups/' + adminGroup.id + '/members', {
+          method: 'POST',
+          body: JSON.stringify({ userId: user.id }),
+        });
+      }
+      await Promise.all([loadUsers(), loadGroups()]);
+    } catch (err) {
+      alert('Failed: ' + (err.body || err.message));
+    }
   }
 
   // ── Groups ──────────────────────────────────────────
@@ -667,7 +1058,7 @@ search_exclude: true
         method: 'POST',
         body: JSON.stringify({ userId }),
       });
-      await loadGroups();
+      await Promise.all([loadGroups(), loadUsers()]);
     } catch (err) {
       alert('Add member failed: ' + (err.body || err.message));
     }
@@ -677,7 +1068,7 @@ search_exclude: true
     if (!confirm('Remove this user from the group?')) return;
     try {
       await api('/api/sfi/groups/' + groupId + '/members/' + userId, { method: 'DELETE' });
-      await loadGroups();
+      await Promise.all([loadGroups(), loadUsers()]);
     } catch (err) {
       alert('Remove failed: ' + (err.body || err.message));
     }
