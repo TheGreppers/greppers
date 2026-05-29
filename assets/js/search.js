@@ -176,6 +176,14 @@ function initSearch() {
           query.term(tokens, {
             wildcard: lunr.Query.wildcard.TRAILING
           });
+          query.term(tokens, {
+            wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING
+          });
+          tokens.forEach(function (token) {
+            query.term(token, {
+              editDistance: token.toString().length > 6 ? 2 : 1
+            });
+          });
         });
   
         if (results.length > 0) {

@@ -6,6 +6,34 @@ permalink: /detect/
 ---
 
 <style>
+/* ── Dark palette (scoped to this page) ─────────── */
+/* The shared `sfi` layout root is a LIGHT theme and never defines
+   --sfi-cyan/--sfi-gold/--sfi-gold-dim etc. This page is authored DARK.
+   Scope the dark palette to a .detect-page wrapper so the shared
+   light header/nav/footer chrome is untouched, and paint the dark
+   background behind the detect content. Values mirror sfifoundation.md. */
+.detect-page {
+  --sfi-dark: #0d1117;
+  --sfi-bg: #0d1117;
+  --sfi-surface: #161b27;
+  --sfi-surface2: #1e2535;
+  --sfi-surface3: #252d3f;
+  --sfi-border: rgba(240,165,0,0.15);
+  --sfi-border-bright: rgba(240,165,0,0.35);
+  --sfi-gold: #F0A500;
+  --sfi-gold-dim: rgba(240,165,0,0.6);
+  --sfi-cyan: #00d4ff;
+  --sfi-purple: #7c3aed;
+  --sfi-text: #e6edf3;
+  --sfi-muted: #8b949e;
+  --sfi-green: #3fb950;
+  --sfi-red: #f85149;
+  --sfi-radius: 12px;
+  --sfi-radius-sm: 8px;
+  background: var(--sfi-bg);
+  color: var(--sfi-text);
+}
+
 /* ── Detector Page Styles ──────────────────────── */
 .detect-hero {
   background: linear-gradient(135deg, var(--sfi-bg) 0%, #0f1a12 40%, var(--sfi-bg) 100%);
@@ -139,6 +167,10 @@ permalink: /detect/
   border-color: var(--sfi-gold);
   background: rgba(240,165,0,0.06);
   transform: translateY(-2px);
+}
+.upload-zone:focus-visible {
+  outline: 2px solid var(--sfi-gold);
+  outline-offset: 3px;
 }
 .upload-zone-icon {
   font-size: 3rem;
@@ -353,6 +385,44 @@ permalink: /detect/
   font-family: 'Inter', sans-serif;
 }
 
+/* Confidence bars (markup emitted by renderer team; CSS only here).
+   Place .detect-conf-bar as a block child of .detect-result-info so the
+   track spans the flex:1 info column width. Fill width is set inline as %. */
+.detect-conf-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--sfi-surface2);
+  overflow: hidden;
+  margin-top: 6px;
+}
+.detect-conf-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  width: 0%; /* width set inline as a % by the renderer */
+  background: linear-gradient(90deg, var(--sfi-gold), var(--sfi-cyan));
+  transition: width 0.4s ease;
+}
+
+/* Error card for analyze failures (markup emitted by detect-app.js;
+   CSS only here). Mirrors the result-card shape with a red accent. */
+.detect-error-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(248,81,73,0.08);
+  border: 1px solid rgba(248,81,73,0.4);
+  border-left: 3px solid var(--sfi-red);
+  border-radius: var(--sfi-radius-sm);
+  padding: 16px 20px;
+  margin-top: 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--sfi-text);
+  line-height: 1.5;
+}
+.detect-error-card strong { color: var(--sfi-red); font-family: 'Oswald', sans-serif; }
+
 /* Analyzing overlay */
 .analyzing-overlay {
   position: absolute;
@@ -422,8 +492,16 @@ permalink: /detect/
   .detect-tabs { flex-direction: column; align-items: stretch; }
   .detect-tab { border-radius: 8px !important; }
   .detect-result-card { flex-wrap: wrap; }
+  /* Stack camera controls; make the primary capture button the large
+     full-width primary action at the top of the stack. */
+  .camera-controls { flex-direction: column; }
+  .cam-btn { width: 100%; }
+  #btnCapture { width: 100%; padding: 16px; font-size: 1rem; order: -1; }
 }
 </style>
+
+<!-- ── Dark-themed page wrapper (scopes the dark palette) ── -->
+<div class="detect-page">
 
 <!-- ── Hero ───────────────────────────────────────── -->
 <div class="detect-hero">
@@ -453,14 +531,16 @@ permalink: /detect/
   </div>
 
   <!-- Tabs -->
-  <div class="detect-tabs">
-    <button class="detect-tab active" onclick="switchTab('upload')">Upload Image</button>
-    <button class="detect-tab" onclick="switchTab('camera')">Use Camera</button>
+  <!-- a11y: switchTab() (input team) must keep aria-selected in sync with .active -->
+  <div class="detect-tabs" role="tablist" aria-label="Detection input method">
+    <button type="button" class="detect-tab active" id="tab-upload" role="tab" aria-selected="true" aria-controls="uploadPanel" onclick="switchTab('upload')">Upload Image</button>
+    <button type="button" class="detect-tab" id="tab-camera" role="tab" aria-selected="false" aria-controls="cameraPanel" onclick="switchTab('camera')">Use Camera</button>
   </div>
 
   <!-- Upload panel -->
-  <div id="uploadPanel">
-    <div class="upload-zone" id="uploadZone">
+  <div id="uploadPanel" role="tabpanel" aria-labelledby="tab-upload">
+    <!-- a11y: Enter/Space keydown activation handler is added by the input team on #uploadZone -->
+    <div class="upload-zone" id="uploadZone" tabindex="0" role="button" aria-label="Upload an image: drag and drop a file here, or activate to browse">
       <span class="upload-zone-icon">&#128247;</span>
       <div class="upload-zone-text">Drag & drop an image here, or click to browse</div>
       <div class="upload-zone-hint">Supports JPG, PNG, WebP &bull; Max 20 MB</div>
@@ -469,7 +549,7 @@ permalink: /detect/
   </div>
 
   <!-- Camera panel -->
-  <div id="cameraPanel" style="display:none;">
+  <div id="cameraPanel" role="tabpanel" aria-labelledby="tab-camera" style="display:none;">
     <div class="camera-zone">
       <div class="camera-preview" id="cameraPreview">
         <video id="cameraVideo" playsinline autoplay muted></video>
@@ -522,6 +602,8 @@ permalink: /detect/
     <a href="/sfi-specs/" class="sfi-btn sfi-btn-primary">Open Spec Search &rarr;</a>
   </div>
 </section>
+
+</div><!-- /.detect-page -->
 
 <!-- ── Scripts: each file has a single responsibility ── -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0/dist/tf.min.js"></script>

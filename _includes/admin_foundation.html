@@ -427,6 +427,163 @@
 
 <script type="module">
   import { pythonURI, javaURI, fetchOptions } from '{{ site.baseurl }}/assets/js/api/config.js';
+
+  // API base for the flask backend (localhost:8423 vs greppers-be in prod).
+  // pythonURI from config.js already resolves to exactly that pair, and is the
+  // host that serves /api/sfi/pdf-summary, so reuse it directly.
+  const API_BASE = pythonURI;
+
+  // Module-scope HTML escaper so summary render helpers (added at module scope)
+  // can safely escape LLM/filename output without depending on the inner
+  // escapeHtml defined inside the Admin block.
+  function escapeHtmlSafe(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Render a summary block: escape HTML and preserve newlines/bullets.
+  function renderSummary(summaryText) {
+    return `<div class="pdf-summary" style="margin:6px 0 8px; padding:8px 10px; background:#f3f4f6; border-left:3px solid #667eea; border-radius:4px; font-size:13px; line-height:1.45; white-space:pre-wrap;">${escapeHtmlSafe(summaryText)}</div>`;
+  }
+
+  // Lazily load pdf.js only when summarization is actually requested. A static
+  // top-level import would break the whole admin panel if the CDN is blocked.
+  let _pdfjsLibPromise = null;
+  function loadPdfjs() {
+    if (!_pdfjsLibPromise) {
+      _pdfjsLibPromise = import('https://mozilla.github.io/pdf.js/build/pdf.mjs').then((lib) => {
+        lib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.mjs';
+        return lib;
+      });
+    }
+    return _pdfjsLibPromise;
+  }
+
+  // Extract concatenated text from a base64-encoded PDF using pdf.js.
+  async function extractPdfText(base64Data) {
+    const pdfjsLib = await loadPdfjs();
+    const raw = atob(base64Data);
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+    let out = '';
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const tc = await page.getTextContent();
+      out += tc.items.map(it => it.str).join(' ') + '\n';
+    }
+    return out.trim();
+  }
+
+  // Map of fileKey -> filename for PDFs only (used by "Summarize all").
+  window.pdfFilenames = window.pdfFilenames || {};
+  // Per-target in-flight guard to avoid concurrent clicks on the same PDF.
+  const _summaryInFlight = {};
+
+  // Summarize a single PDF; renders inline beneath the row. Returns true on success.
+  // The raw (unescaped) filename is looked up from window.pdfFilenames[key];
+  // callers pass only the key so no user-controlled string is interpolated into
+  // inline onclick attributes or double-escaped.
+  window.summarizePdf = async function (key) {
+    const target = document.getElementById('summary-' + key);
+    if (!target) return false;
+    const filename = (window.pdfFilenames && window.pdfFilenames[key]) || 'unknown';
+    if (_summaryInFlight[key]) return false;
+    _summaryInFlight[key] = true;
+
+    const base64 = window.fileDataStore[key];
+    if (!base64) {
+      target.innerHTML = '<span class="summary-error" style="color:#b91c1c; font-size:13px;">Error: file data not found.</span>';
+      _summaryInFlight[key] = false;
+      return false;
+    }
+
+    target.innerHTML = '<span class="summary-loading" style="color:#6b7280; font-size:13px;">Summarizing…</span>';
+
+    let text;
+    try {
+      text = await extractPdfText(base64);
+    } catch (err) {
+      console.error('extractPdfText failed:', err);
+      target.innerHTML = '<span class="summary-error" style="color:#b91c1c; font-size:13px;">Could not read PDF — try again.</span>';
+      _summaryInFlight[key] = false;
+      return false;
+    }
+
+    if (!text || !text.trim()) {
+      target.innerHTML = '<span class="summary-error" style="color:#b91c1c; font-size:13px;">No extractable text (scanned PDF?)</span>';
+      _summaryInFlight[key] = false;
+      return false;
+    }
+
+    try {
+      const res = await fetch(API_BASE + '/api/sfi/pdf-summary', {
+        ...fetchOptions,
+        method: 'POST',
+        body: JSON.stringify({ filename, text })
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        target.innerHTML = '<span class="summary-error" style="color:#b91c1c; font-size:13px;">Sign in to summarize.</span>';
+        return false;
+      }
+
+      if (!res.ok) {
+        let msg = 'Could not summarize — try again';
+        try {
+          const errData = await res.json();
+          if (errData && errData.message) msg = errData.message;
+        } catch (_) { /* ignore parse errors */ }
+        target.innerHTML =
+          `<span class="summary-error" style="color:#b91c1c; font-size:13px;">${escapeHtmlSafe(msg)}</span> ` +
+          `<button class="action-btn" style="font-size:12px; padding:2px 6px;" onclick="summarizePdf('${key}')">Retry</button>`;
+        return false;
+      }
+
+      const data = await res.json();
+      target.innerHTML = renderSummary(data.summary || '(no summary returned)');
+      return true;
+    } catch (err) {
+      console.error('summarizePdf fetch failed:', err);
+      target.innerHTML =
+        '<span class="summary-error" style="color:#b91c1c; font-size:13px;">Could not summarize — try again</span> ' +
+        `<button class="action-btn" style="font-size:12px; padding:2px 6px;" onclick="summarizePdf('${key}')">Retry</button>`;
+      return false;
+    } finally {
+      _summaryInFlight[key] = false;
+    }
+  };
+
+  // Summarize every PDF in the store sequentially, rendering each as it returns.
+  window.summarizeAllPdfs = async function () {
+    const btn = document.getElementById('summarize-all-btn');
+    const status = document.getElementById('summarize-all-status');
+    const keys = Object.keys(window.pdfFilenames || {});
+
+    if (!keys.length) {
+      if (status) status.textContent = 'No PDFs found';
+      return;
+    }
+
+    if (btn) btn.disabled = true;
+    let done = 0;
+    for (const key of keys) {
+      done++;
+      if (status) status.textContent = `Summarizing ${done}/${keys.length}…`;
+      try {
+        await window.summarizePdf(key);
+      } catch (err) {
+        console.error('summarizeAllPdfs item failed:', err);
+      }
+    }
+    if (status) status.textContent = `Done (${keys.length} PDF${keys.length === 1 ? '' : 's'})`;
+    if (btn) btn.disabled = false;
+  };
+
   // Wait for DOM to be fully loaded
   document.addEventListener('DOMContentLoaded', async function () {
     console.log("Admin panel script loaded.");
@@ -636,7 +793,8 @@
             let contentHtml = '';
             if (Array.isArray(g.content)) {
               contentHtml = g.content.map((c, contentIndex) => {
-                const filename = escapeHtml(c.filename || 'unknown');
+                const rawFilename = c.filename || 'unknown';
+                const filename = escapeHtml(rawFilename);
                 const isPdf = filename.toLowerCase().endsWith('.pdf');
                 const filePreview = c.file ? escapeHtml(c.file.substring(0, 10)) : '';
 
@@ -649,6 +807,10 @@
                   window.fileDataStore[fileKey] = c.file;
 
                   if (isPdf) {
+                    // Record this PDF for the "Summarize all" loop. Store the raw
+                    // (unescaped) filename; summarizePdf escapes only at HTML
+                    // insertion and posts the raw value to the backend.
+                    window.pdfFilenames[fileKey] = rawFilename;
                     fileDisplay += `
                         <button onclick="openPdfViewer('${fileKey}', '${filename}')" class="action-btn" title="View PDF">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -656,6 +818,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
                         </button>
+                        <button onclick="summarizePdf('${fileKey}')" class="action-btn" title="Summarize PDF">Summarize</button>
                        `;
                   } else {
                     // Download button for other file types
@@ -669,7 +832,13 @@
                   }
                 }
 
-                return `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">${fileDisplay}</div>`;
+                // fileKey is only defined when c.file exists; build a stable
+                // summary target id keyed by it so summaries render inline.
+                const summaryTargetId = c.file ? `file_${g.uid || g.studentId}_${rowIndex}_${contentIndex}` : '';
+                const summaryTarget = summaryTargetId
+                  ? `<div class="pdf-summary-target" id="summary-${summaryTargetId}"></div>`
+                  : '';
+                return `<div style="margin-bottom:4px;"><div style="display:flex; align-items:center; justify-content:space-between;">${fileDisplay}</div>${summaryTarget}</div>`;
               }).join('');
             }
 
@@ -701,6 +870,10 @@
           `}).join('');
 
           const tableHtml = `\
+            <div id="pdf-summary-toolbar" style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">\
+              <button id="summarize-all-btn" class="btn btn-primary" onclick="summarizeAllPdfs()">Summarize all PDFs</button>\
+              <span id="summarize-all-status" style="font-size:13px; color:#6b7280;"></span>\
+            </div>\
             <table id="admin-table">\
               <thead>\
                 <tr>\

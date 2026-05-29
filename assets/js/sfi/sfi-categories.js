@@ -74,7 +74,7 @@ const SFI_CATEGORIES = [
       "Steering Wheel Quick Disconnect/Release"
     ],
     cocoKeys: [],
-    mnetKeys: ["shaft", "axle", "rod", "pipe", "steel", "metal", "gear", "cog",
+    mnetKeys: ["shaft", "axle", "pipe", "steel", "metal", "gear", "cog",
                "steering wheel", "wheel", "reel", "spool", "spindle"],
     boost: 0
   },
@@ -189,7 +189,7 @@ const SFI_CATEGORIES = [
     ],
     cocoKeys: [],
     mnetKeys: ["container", "barrel", "drum", "tank", "bucket", "tub", "vat",
-               "crate", "chest", "box", "canister", "jerry can", "gas pump"],
+               "crate", "chest", "canister", "jerry can", "gas pump"],
     boost: 0
   },
   {
@@ -214,8 +214,8 @@ const SFI_CATEGORIES = [
       "Manifold Blankets", "Engine Blankets - Rear"
     ],
     cocoKeys: [],
-    mnetKeys: ["net", "mesh", "web", "hammock", "volleyball net",
-               "cushion", "pillow", "pad", "mattress", "quilt", "blanket",
+    mnetKeys: ["mesh", "hammock", "volleyball net",
+               "cushion", "pillow", "mattress", "quilt", "blanket",
                "comforter", "sleeping bag", "wool", "fabric", "velvet"],
     boost: 0
   },
@@ -232,7 +232,7 @@ const SFI_CATEGORIES = [
       "Nitro-Methane Fuel Motorcycle Engine Restraint Devices"
     ],
     cocoKeys: ["boat", "airplane"],
-    mnetKeys: ["wing", "airfoil", "spoiler", "fin", "rudder",
+    mnetKeys: ["wing", "airfoil", "spoiler", "rudder",
                "canopy", "parachute", "cable", "wire", "tether",
                "carbon fiber", "composite", "hull", "speedboat",
                "aircraft carrier", "warplane"],

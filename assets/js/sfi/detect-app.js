@@ -24,6 +24,10 @@ const DetectApp = (() => {
       if (percent >= 100) {
         statusEl.classList.add('ready');
         document.getElementById('modelProgress').style.display = 'none';
+        if (typeof DetectEngine.isDegraded === 'function' && DetectEngine.isDegraded()) {
+          document.getElementById('modelStatusText').textContent =
+            'Models ready (limited mode — classification unavailable)';
+        }
       }
     });
   }
@@ -51,7 +55,7 @@ const DetectApp = (() => {
       DetectRenderer.displayResults(sfiResults, mnetResults, cocoResults);
     } catch (err) {
       console.error('Analysis error:', err);
-      resultsDiv.innerHTML = '<div class="no-results">Analysis failed. Please try a different image.</div>';
+      resultsDiv.innerHTML = '<div class="detect-error-card"><strong>Analysis failed</strong><p>We couldn\'t process that image. Try a clearer, well-lit photo of a single piece of equipment, or a different file.</p></div>';
     }
 
     overlay.style.display = 'none';

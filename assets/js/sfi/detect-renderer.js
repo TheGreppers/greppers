@@ -97,21 +97,18 @@ const DetectRenderer = (() => {
     };
   }
 
-  function drawBoundingBoxes(imgEl, regions, sfiResults) {
-    const canvas = document.getElementById('resultCanvas');
-    const wrap = document.getElementById('resultWrap');
-    const displayWidth = wrap.clientWidth;
-    const displayHeight = imgEl.naturalHeight * (displayWidth / imgEl.naturalWidth);
-
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-    canvas.style.height = displayHeight + 'px';
+  // Draws scaled bounding boxes for `regions` (bbox in SOURCE pixel coords:
+  // srcW x srcH) onto `canvas`, scaling to the canvas's CURRENT width/height.
+  // The CALLER is responsible for sizing the canvas before calling.
+  // Reused by both the still-result canvas and the live camera overlay.
+  function drawBoxesOnCanvas(canvas, srcW, srcH, regions, sfiResults) {
+    if (!canvas || !srcW || !srcH) return;
 
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const scaleX = displayWidth / imgEl.naturalWidth;
-    const scaleY = displayHeight / imgEl.naturalHeight;
+    const scaleX = canvas.width / srcW;
+    const scaleY = canvas.height / srcH;
 
     regions.forEach(region => {
       const fallback = sfiResults.length > 0 ? sfiResults[0].cat : SFI_CATEGORIES[0];
@@ -165,12 +162,35 @@ const DetectRenderer = (() => {
     }
   }
 
+  // Thin wrapper for the still-image path: computes display size from
+  // #resultWrap, sizes the canvas, then delegates to drawBoxesOnCanvas.
+  function drawBoundingBoxes(imgEl, regions, sfiResults) {
+    const canvas = document.getElementById('resultCanvas');
+    const wrap = document.getElementById('resultWrap');
+    const displayWidth = wrap.clientWidth;
+    const displayHeight = imgEl.naturalHeight * (displayWidth / imgEl.naturalWidth);
+
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+    canvas.style.height = displayHeight + 'px';
+
+    drawBoxesOnCanvas(canvas, imgEl.naturalWidth, imgEl.naturalHeight, regions, sfiResults);
+  }
+
   function displayResults(sfiResults, globalMnet, cocoResults) {
     _lastResults = sfiResults;
     const div = document.getElementById('detectResults');
+    div.setAttribute('role', 'list');
 
-    if (sfiResults.length === 0) {
+    const n = sfiResults.length;
+    const summaryText = n > 0
+      ? `Detected ${n} categor${n === 1 ? 'y' : 'ies'}`
+      : 'No equipment detected';
+    const summaryHtml = `<div class="detect-results-summary" role="status" aria-live="polite">${summaryText}</div>`;
+
+    if (n === 0) {
       div.innerHTML = `
+        ${summaryHtml}
         <div class="no-results">
           <p style="font-size:1.5rem;margin-bottom:8px;">&#128269;</p>
           <p>No SFI equipment detected in this image.</p>
@@ -181,13 +201,15 @@ const DetectRenderer = (() => {
       return;
     }
 
-    let html = '<div class="detect-results-title">Detected SFI Equipment Categories</div>';
+    let html = summaryHtml + '<div class="detect-results-title">Detected SFI Equipment Categories</div>';
 
     sfiResults.forEach(result => {
-      const conf = result.confidence;
+      const rawConf = result.confidence;
+      const conf = rawConf;
+      const barWidth = Math.max(0, Math.min(100, rawConf));
       const confColor = conf >= 60 ? 'var(--sfi-green)' : conf >= 30 ? 'var(--sfi-gold)' : 'var(--sfi-muted)';
       html += `
-        <div class="detect-result-card">
+        <div class="detect-result-card" role="listitem">
           <div class="detect-result-color" style="background:${result.cat.color}"></div>
           <div class="detect-result-info">
             <div class="detect-result-name">${result.cat.name}</div>
@@ -196,9 +218,13 @@ const DetectRenderer = (() => {
           <div style="text-align:right;">
             <div class="detect-result-conf" style="color:${confColor}">${conf}%</div>
             <div class="detect-result-conf-label">confidence</div>
+            <div class="detect-conf-bar"><div class="detect-conf-bar-fill" style="width:${barWidth}%"></div></div>
           </div>
         </div>`;
     });
+
+    html += `
+      <p class="detect-disclaimer">AI estimate &mdash; verify against the official SFI spec.</p>`;
 
     // Small helper panel asking the user to save any / all detected gear.
     html += `
@@ -236,5 +262,5 @@ const DetectRenderer = (() => {
     `).join('');
   }
 
-  return { drawBoundingBoxes, displayResults, buildCatRef };
+  return { drawBoundingBoxes, displayResults, buildCatRef, drawBoxesOnCanvas };
 })();
