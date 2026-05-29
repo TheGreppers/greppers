@@ -31,7 +31,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1' # Set this to your desired Ruby version
+          ruby-version: '3.4' # Match the platform (x86_64-linux-gnu) the committed Gemfile.lock was bundled for, so the precompiled sass-embedded binary is used instead of a source build
           bundler-cache: true
       - name: Install Jekyll and dependencies
         run: |
