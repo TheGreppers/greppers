@@ -42,10 +42,7 @@ Important frontend files and directories:
 - Modern SFI-themed UI, shared layout, navigation, and content pages.
 - Plain-English/fuzzy spec search with typo tolerance on `/sfi-specs/`.
 - SFI spec categories, metadata, and links to official PDF documents.
-- ML text classifier connected to the Flask endpoint `POST /api/sfi/classify`.
-- Site-wide chatbot widget connected to `POST /api/sfi/chat`.
 - Client-side image/camera equipment detector using COCO-SSD and MobileNet in the browser.
-- "My Gear" tracking page with certification dates, expiration scoring, local fallback, and backend sync when authenticated.
 - Spec CRUD accordion on `/sfi-specs/` for adding, editing, and deleting spec records through the Flask API.
 
 ## Known Gaps
@@ -55,7 +52,7 @@ Important frontend files and directories:
 - Gear review states exist in frontend expectations, but the backend gear model currently stores only basic per-user gear data.
 - UI polish is still needed, especially consistency, responsive behavior, spacing, and admin dashboard layout.
 - The chatbot only receives a compact spec database summary. It does not yet read full website content or PDF contents.
-- PDF summarization is planned but not implemented.
+- PDF summarization is planned but not implemented. Must be secure and not take summarize too much and lose details.
 - The detector is browser-side image classification. It can suggest likely equipment categories, but it does not verify official SFI labels, certification status, or compliance.
 
 ## Future Work
@@ -66,6 +63,8 @@ Important frontend files and directories:
 - Finish admin dashboard backend endpoints and permission checks.
 - Improve responsive UI polish across mobile and desktop.
 - Add smoke tests for the main routes and API-connected workflows.
+- "My Gear" tracking page with certification dates, expiration scoring, local fallback, and backend sync when authenticated.
+- Site-wide chatbot widget connected to `POST /api/sfi/chat`.
 
 ## Backend Dependency
 
